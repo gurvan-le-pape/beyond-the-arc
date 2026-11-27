@@ -5,6 +5,19 @@
 
 import * as Sentry from "@sentry/nextjs";
 
+// The hostnames production serves. One bundle is built and served from every
+// host that runs the image, so the browser's environment cannot come from a
+// build variable the way the server's does (SENTRY_ENVIRONMENT): a production
+// build is `production` on these names and takes the hostname anywhere else
+// (lab.beyondthearc.app, rehearsal.beyondthearc.app, localhost).
+const productionHosts = new Set(["beyondthearc.app", "www.beyondthearc.app"]);
+
+function sentryEnvironment(): string {
+  if (process.env.NODE_ENV !== "production") return process.env.NODE_ENV;
+  const host = window.location.hostname;
+  return productionHosts.has(host) ? "production" : host;
+}
+
 Sentry.init({
   // In the browser bundle `SENTRY_DSN` is not inlined (it is not a
   // `NEXT_PUBLIC_` variable), so the client always uses the public literal
@@ -16,8 +29,8 @@ Sentry.init({
 
   // @sentry/core defaults `environment` to the literal string "production", so
   // leaving it unset files local development errors into the production project
-  // indistinguishably from real ones. Set it explicitly. Matches the backend.
-  environment: process.env.NODE_ENV,
+  // indistinguishably from real ones. Set it explicitly (sentryEnvironment above).
+  environment: sentryEnvironment(),
 
   // Enable logs to be sent to Sentry
   enableLogs: true,

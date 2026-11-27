@@ -11,7 +11,10 @@ Sentry.init({
   // compose file inherits SENTRY_DSN from the base service definition. Set it
   // explicitly, and default to development: the prod image hardcodes
   // NODE_ENV=production, so an absent value can only be a local run.
-  environment: process.env.NODE_ENV ?? "development",
+  // SENTRY_ENVIRONMENT comes first: it names a deployment that runs the
+  // production image but is not production (the k3s lab, the rehearsal host).
+  environment:
+    process.env.SENTRY_ENVIRONMENT ?? process.env.NODE_ENV ?? "development",
 
   // Identifies which build produced an event. Supplied as the deploy's image
   // tag (the commit SHA), so a release always names an image that exists and a
