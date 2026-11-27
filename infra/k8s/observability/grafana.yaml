@@ -1,0 +1,134 @@
+# Grafana, as production runs it: the same release, production's provisioning (mounted
+# from the ConfigMaps kustomization.yaml generates), its memory cap and GOMEMLIMIT.
+#
+# Alerts are evaluated here and visible in Grafana, but no e-mail leaves the lab: SMTP is
+# off, so a notification fails and is logged instead of reaching production's mailbox.
+# The contact point still needs an address to provision, hence the placeholder.
+#
+# The admin password is the grafana-admin Secret, sealed (grafana-admin.sealed.yaml).
+# Reached by a port-forward: kubectl -n monitoring port-forward svc/grafana 3001:3000
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  labels:
+    app.kubernetes.io/name: grafana
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  # One pod owns the SQLite database on the volume.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: grafana
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: grafana
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 472
+        runAsGroup: 0
+        fsGroup: 472
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: grafana
+          image: grafana/grafana:13.0.13@sha256:9b031995a5483a44f80a5dd214a70cecb31448b42d765b44d3756e17b855775f
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-admin
+                  key: password
+            - name: GF_SMTP_ENABLED
+              value: "false"
+            - name: GMAIL_ADDRESS
+              value: alerts@lab.invalid
+            - name: GF_SECURITY_X_XSS_PROTECTION
+              value: "false"
+            - name: GOMEMLIMIT
+              value: 400MiB
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/grafana
+            - name: tmp
+              mountPath: /tmp
+            - name: datasources
+              mountPath: /etc/grafana/provisioning/datasources
+            # dashboards.yml points its provider at this same directory, as in production.
+            - name: dashboards
+              mountPath: /etc/grafana/provisioning/dashboards
+            - name: alerting
+              mountPath: /etc/grafana/provisioning/alerting
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: grafana
+        - name: tmp
+          emptyDir: {}
+        - name: datasources
+          configMap:
+            name: grafana-datasources
+        - name: dashboards
+          projected:
+            sources:
+              - configMap:
+                  name: grafana-dashboard-providers
+              - configMap:
+                  name: grafana-dashboards
+        - name: alerting
+          configMap:
+            name: grafana-alerting
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana
+spec:
+  storageClassName: local-path
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+spec:
+  selector:
+    app.kubernetes.io/name: grafana
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http

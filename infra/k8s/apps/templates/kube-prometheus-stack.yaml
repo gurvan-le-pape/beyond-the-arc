@@ -1,0 +1,32 @@
+# Metrics: the Prometheus operator, one Prometheus, node-exporter and kube-state-metrics.
+# The rest of the chart is off. Grafana and Loki run from ../../observability/, with
+# production's configuration; alerting is Grafana's, as in production, so neither
+# Alertmanager nor the chart's default rules are installed. k3s runs the control plane
+# in one process that exposes no etcd, scheduler, controller-manager or kube-proxy
+# endpoints, so those targets would only ever be down.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: {{ .Values.kubePrometheusStack.chartVersion }}
+    helm:
+      releaseName: kps
+      valuesObject:
+        {{- .Files.Get "values/kube-prometheus-stack.yaml" | nindent 8 }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      # The CRDs are larger than the annotation client-side apply records.
+      - ServerSideApply=true

@@ -1,0 +1,42 @@
+# Grafana, Loki, the blackbox exporter, Alloy, and what Prometheus scrapes, in the
+# monitoring namespace. Grafana's provisioning (datasources, dashboard, the alert rules and
+# the contact point), Loki's configuration and the blackbox modules are production's own
+# files under docker/config/, so a rule or a dashboard changes once for both. Reading
+# outside this directory needs Kustomize's load restrictor off, which Argo CD sets
+# (../argocd/values.yaml) and validate.sh passes.
+#
+# containers.json is left out: it reads cAdvisor's Docker Compose labels, which the
+# kubelet's cAdvisor does not have.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: monitoring
+resources:
+  - prometheus.yaml
+  - grafana.yaml
+  - grafana-admin.sealed.yaml
+  - loki.yaml
+  - blackbox-exporter.yaml
+  - alloy.yaml
+configMapGenerator:
+  - name: grafana-datasources
+    files:
+      - ../../../docker/config/grafana/provisioning/datasources/datasources.yml
+  - name: grafana-dashboard-providers
+    files:
+      - ../../../docker/config/grafana/provisioning/dashboards/dashboards.yml
+  - name: grafana-dashboards
+    files:
+      - ../../../docker/config/grafana/provisioning/dashboards/backend-overview.json
+  - name: grafana-alerting
+    files:
+      - ../../../docker/config/grafana/provisioning/alerting/rules.yml
+      - ../../../docker/config/grafana/provisioning/alerting/contact-points.yml
+  - name: loki
+    files:
+      - config.yml=../../../docker/config/loki.yml
+  - name: blackbox-exporter
+    files:
+      - config.yml=../../../docker/config/blackbox.yml
+  - name: alloy
+    files:
+      - config.alloy

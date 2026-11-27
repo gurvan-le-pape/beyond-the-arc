@@ -19,3 +19,7 @@ certManager:
 # The Sealed Secrets controller; ../Dockerfile's kubeseal is the same release.
 sealedSecrets:
   chartVersion: 2.22.0
+
+# Prometheus, its operator, node-exporter and kube-state-metrics.
+kubePrometheusStack:
+  chartVersion: 94.2.0

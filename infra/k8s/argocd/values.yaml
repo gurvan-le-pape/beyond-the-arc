@@ -10,3 +10,9 @@ notifications:
   enabled: false
 applicationSet:
   replicas: 0
+configs:
+  cm:
+    # observability/ reads production's configuration files under docker/config/, outside
+    # its own directory, which Kustomize refuses by default. Every path stays inside this
+    # repository, which Argo CD checks out whole.
+    kustomize.buildOptions: --load-restrictor LoadRestrictionsNone

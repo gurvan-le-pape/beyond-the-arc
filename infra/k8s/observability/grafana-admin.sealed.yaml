@@ -1,0 +1,16 @@
+# Grafana's admin password. The plain value is on the maintainer's machine only, in
+# ~/.config/bta-k8s/grafana-admin.env (GRAFANA_ADMIN_PASSWORD=…, mode 600), generated at
+# random; here it is sealed to this cluster, as the grafana-admin Secret in monitoring.
+# A new cluster has a new key; seal it again (README, Certificates).
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: grafana-admin
+  namespace: monitoring
+spec:
+  encryptedData:
+    password: AgBlVFMPZL0by9xpLKBoO19aflchGHus4RKe2hgUyqcBwXeGz5qG3Suj9su41dajANmhKvIbZX8CNM2M5kEbOmZ7rcWSBkfC/SVPBhbaV/AWRqbSjuiYXC5NWnexzpnmIEjR9dnItXT9YVnLHg53vIVAj09LiEM1CAp4rmdC3pHHpyIGJrsEm9GUJX7idJOzyZSeZrc0yTdEuULi4wl8mQ34nHBbRgaCWdKXBxDtMPFALzkCLKvqbDxKmaSYHaPfrEFJxovQx/yvlbU1ZQzLtxgMqqmZnFL0ZjZd25BTMUmN+totapT/CLFswnm8RO2QqKni8AtT6WhiXL5SHge4c/J1HjXYykmYINh8QCI9uEVZzJtNBYwb5cnd+5l9XEH0KlWwuMztkz21DXeXL/1a3zb+gmk4VrNlKiS6sechhbIAJyAyJjuMsi/0+2EorlCHp/85QEu+wCBsQlFVsqSobULveO6dWZ2XKSeR2Z4KbY+I3r36bs9t+upcw1YV64e3SeTlByFXN/dQrBAJnpNAWRo/nMWVQuTg9Gjk60q33Xy/FMS5NXdj97Q2Fomjc5Jqt235nxwFAlxzPc+tQ/Y8+IpMfRTR5YOz1xyriATm3zq14lA74sdNlOvyCyWaKzrMZd2FXiONQBSZJzMfSDMWDhJzxhrNSFPbHg1uCPN33k5r8olQYvR7HiBcODcZ4c8irbUec2IlG4QM6QrXVCLNEwej34BOC4kuq9mjpQzWJTtY
+  template:
+    metadata:
+      name: grafana-admin
+      namespace: monitoring

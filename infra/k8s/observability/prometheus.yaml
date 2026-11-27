@@ -1,0 +1,68 @@
+# What Prometheus scrapes beyond the cluster itself, and the name Grafana reaches it by.
+#
+# The backend's /metrics, as production's `backend` job: a ServiceMonitor's job label is
+# the Service's name, so the alert rules' up{job="backend"} reads the same here.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: backend
+spec:
+  namespaceSelector:
+    matchNames: [bta]
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: backend
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+---
+# Production's blackbox-http job: the page a visitor loads, and the backend's health
+# check with its database, heap and disk indicators.
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: blackbox-http
+spec:
+  jobName: blackbox-http
+  module: http_2xx
+  interval: 15s
+  prober:
+    url: blackbox-exporter:9115
+  targets:
+    staticConfig:
+      static:
+        - http://frontend.bta.svc:3000/
+        - http://backend.bta.svc:4000/api/health
+---
+# Production's blackbox-tcp job: the database accepts connections.
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: blackbox-tcp
+spec:
+  jobName: blackbox-tcp
+  module: tcp_connect
+  interval: 15s
+  prober:
+    url: blackbox-exporter:9115
+  targets:
+    staticConfig:
+      static:
+        - database-rw.bta.svc:5432
+---
+# Production's datasource file points Grafana at http://prometheus:9090. The operator
+# names its Service after the release (kps-prometheus); this one gives the same pods the
+# name the file uses.
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+spec:
+  selector:
+    app.kubernetes.io/name: prometheus
+    operator.prometheus.io/name: kps-prometheus
+  ports:
+    - name: http
+      port: 9090
+      targetPort: 9090
