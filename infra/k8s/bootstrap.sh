@@ -14,8 +14,8 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 revision="${1:-main}"
-chart_version=$(sed -n 's/^  chartVersion: *//p' apps/values.yaml)
-[ -n "$chart_version" ] || { echo "bootstrap.sh: no chartVersion in apps/values.yaml" >&2; exit 1; }
+chart_version=$(sed -n '/^argocd:/,/^[^ ]/s/^  chartVersion: *//p' apps/values.yaml)
+[ -n "$chart_version" ] || { echo "bootstrap.sh: no argocd.chartVersion in apps/values.yaml" >&2; exit 1; }
 
 kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
 helm template argocd argo-cd --repo https://argoproj.github.io/argo-helm \
