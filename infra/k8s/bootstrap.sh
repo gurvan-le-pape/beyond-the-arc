@@ -32,10 +32,11 @@ helm template argocd argo-cd --repo https://argoproj.github.io/argo-helm \
   kubectl apply --server-side --force-conflicts --field-manager=bootstrap -n argocd -f -
 kubectl -n argocd rollout status deployment,statefulset --timeout=300s
 
-# The revision and the values files are patched in every time, main included, so that
-# a run on main undoes an earlier run on a branch.
-kubectl apply -f root.yaml
+# The revision and the values files are set every time, main included, so that a run on
+# main undoes an earlier run on a branch. They are merged into root.yaml before it is
+# applied, never patched in after: root.yaml alone renders the apps chart from main with
+# the lab's defaults, and Argo CD starts syncing that the moment it exists.
 patch=$(printf '{"spec":{"source":{"targetRevision":"%s","helm":{"valueFiles":%s,"parameters":[{"name":"targetRevision","value":"%s"}]}}}}' \
   "$revision" "$value_files" "$revision")
-kubectl -n argocd patch application root --type merge -p "$patch"
+kubectl patch --local -f root.yaml --type merge -p "$patch" -o yaml | kubectl apply -f -
 echo "bootstrap.sh: ${BTA_CLUSTER:-lab}, root follows $revision"

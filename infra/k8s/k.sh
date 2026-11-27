@@ -42,7 +42,7 @@ case "$cluster" in
     kubeconfig="$state/production.kubeconfig"
     [ "$1" != k3d ] || { echo "k.sh: k3d manages the lab only" >&2; exit 2; }
     [ -f "$kubeconfig" ] || { echo "k.sh: no $kubeconfig; run infra/k8s/tunnel.sh kubeconfig" >&2; exit 2; }
-    "$here/tunnel.sh" check > /dev/null || { echo "k.sh: production's tunnel is down; run infra/k8s/tunnel.sh up" >&2; exit 2; }
+    "$here/tunnel.sh" check > /dev/null 2>&1 || { echo "k.sh: production's tunnel is down; run infra/k8s/tunnel.sh up" >&2; exit 2; }
     ;;
   *) echo "k.sh: BTA_CLUSTER is lab or production, not $cluster" >&2; exit 2 ;;
 esac
