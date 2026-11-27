@@ -7,6 +7,7 @@ cluster: lab
 # what production does not run yet. root.yaml reads that file on production only
 # (bootstrap.sh, BTA_CLUSTER).
 components:
+  traefik: true
   sealedSecrets: true
   cnpg: true
   database: true
