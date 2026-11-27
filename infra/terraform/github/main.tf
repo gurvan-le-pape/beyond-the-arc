@@ -8,8 +8,10 @@ locals {
     build      = { branch_policy_id = 68248639 }
   }
   environment_variables = {
-    FRONTEND_URL        = "https://beyondthearc.app"
-    NEXT_PUBLIC_API_URL = "https://beyondthearc.app/api"
+    FRONTEND_URL = "https://beyondthearc.app"
+    # Relative: the browser calls the API on whatever host served the page, so the one
+    # frontend image works behind any proxy that routes /api to the backend.
+    NEXT_PUBLIC_API_URL = "/api"
   }
   repository_variables = {
     DEPLOY_ENABLED       = "true"
