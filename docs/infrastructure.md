@@ -165,7 +165,7 @@ A Next.js 15 application served on port 3000.
 
 In development, the source directory is bind-mounted into the container and the dev server runs with hot reload. In production, the image is built in CI, pushed to the container registry, and pulled onto the VPS — no build happens on the server.
 
-`NEXT_PUBLIC_API_URL` and `FRONTEND_URL` are passed as both build args and runtime env vars; `INTERNAL_API_URL` is a runtime env var only. The `NEXT_PUBLIC_` prefix makes the API URL available in the browser bundle. `INTERNAL_API_URL` is used for server-side rendering inside the Docker network, where the frontend container reaches the backend directly by service name rather than going through Nginx. `SENTRY_AUTH_TOKEN` is passed as a BuildKit secret mount, exposed only to the `npm run build` step — it is needed at build time for Sentry source map upload and never enters the image config or its layers (a build arg would persist in the image metadata in the registry).
+`NEXT_PUBLIC_API_URL` and `FRONTEND_URL` are passed as both build args and runtime env vars; `INTERNAL_API_URL` is a runtime env var only. The `NEXT_PUBLIC_` prefix makes the API URL available in the browser bundle, inlined at build time; it is the relative `/api`, so the browser calls the API on the host that served the page and one image serves any host. `INTERNAL_API_URL` is used for server-side rendering inside the Docker network, where the frontend container reaches the backend directly by service name rather than going through Nginx. `SENTRY_AUTH_TOKEN` is passed as a BuildKit secret mount, exposed only to the `npm run build` step — it is needed at build time for Sentry source map upload and never enters the image config or its layers (a build arg would persist in the image metadata in the registry).
 
 ### backend
 
@@ -274,7 +274,7 @@ The scheduler Dockerfile creates a dedicated `appuser` group and user and sets `
 
 ## Networking
 
-All containers share a single Docker bridge network (`my_network`). Services communicate by container name. The frontend container uses `INTERNAL_API_URL` (`http://backend:4000/api` inside the network) for server-side API calls, while browser-side calls use `NEXT_PUBLIC_API_URL` (the public URL via Nginx).
+All containers share a single Docker bridge network (`my_network`). Services communicate by container name. The frontend container uses `INTERNAL_API_URL` (`http://backend:4000/api` inside the network) for server-side API calls, while browser-side calls use `NEXT_PUBLIC_API_URL` (`/api` on the site's own host, which Nginx proxies to the backend).
 
 ---
 

@@ -82,7 +82,7 @@ describe("request", () => {
 async function loadRequest(runtime: "server" | "browser") {
   vi.resetModules();
   vi.stubEnv("INTERNAL_API_URL", "http://backend:4000/api");
-  vi.stubEnv("NEXT_PUBLIC_API_URL", "https://beyondthearc.app/api");
+  vi.stubEnv("NEXT_PUBLIC_API_URL", "/api");
   if (runtime === "browser") vi.stubGlobal("window", globalThis);
   return (await import("./api")).request;
 }
@@ -115,14 +115,14 @@ describe("request — the HTTP contract", () => {
     expect(fetch.mock.calls[0][0]).toBe("http://backend:4000/api/teams");
   });
 
-  it("calls the public URL in the browser", async () => {
+  it("calls the API on the page's own origin in the browser", async () => {
     const fetch = recordingFetch(() => Response.json({ data: [] }));
     vi.stubGlobal("fetch", fetch);
     const request = await loadRequest("browser");
 
     await request("/teams");
 
-    expect(fetch.mock.calls[0][0]).toBe("https://beyondthearc.app/api/teams");
+    expect(fetch.mock.calls[0][0]).toBe("/api/teams");
   });
 
   it("returns the envelope's data, or the body when it has none", async () => {

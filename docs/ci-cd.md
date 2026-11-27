@@ -253,7 +253,7 @@ Those of the `build` environment, with the same restrictions, reach only the `im
 | `build` secret or variable | Purpose |
 | --- | --- |
 | `SENTRY_AUTH_TOKEN` (secret) | Source map upload, passed as a BuildKit secret |
-| `NEXT_PUBLIC_API_URL`, `FRONTEND_URL` (variables) | Frontend build args; public, since the site serves them. The job fails if either is empty |
+| `NEXT_PUBLIC_API_URL`, `FRONTEND_URL` (variables) | Frontend build args; public, since the site serves them. `NEXT_PUBLIC_API_URL` is the relative `/api`, so the image calls the API on whichever host serves it. The job fails if either is empty |
 
 The rest are the repository's (Secrets and variables → Actions). `SONAR_TOKEN` is among them because pull requests use it. A secret of the same name on the repository is readable from any of its branches: the environment's take precedence in its job but do not hide it.
 
