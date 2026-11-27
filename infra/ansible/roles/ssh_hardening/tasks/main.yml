@@ -1,10 +1,10 @@
 ---
 # Validated with the rest of sshd's configuration before the reload: copy's validate
 # checks the drop-in alone, the handler checks the whole before reloading.
-- name: Turn off password and keyboard-interactive logins
-  ansible.builtin.copy:
-    src: 10-disable-password-auth.conf
-    dest: /etc/ssh/sshd_config.d/10-disable-password-auth.conf
+- name: Restrict SSH logins to keys
+  ansible.builtin.template:
+    src: "{{ ssh_hardening_dropin }}.j2"
+    dest: "/etc/ssh/sshd_config.d/{{ ssh_hardening_dropin }}"
     owner: root
     group: root
     mode: "0644"
@@ -28,6 +28,10 @@
     that:
       - "'passwordauthentication no' in ssh_hardening_effective.stdout_lines"
       - "'kbdinteractiveauthentication no' in ssh_hardening_effective.stdout_lines"
-    fail_msg: another sshd_config.d file sets a password or keyboard-interactive login
+      # sshd -T prints prohibit-password under its older name.
+      - >-
+        'permitrootlogin ' ~ (ssh_hardening_permit_root_login | replace('prohibit-password', 'without-password'))
+        in ssh_hardening_effective.stdout_lines
+    fail_msg: another sshd_config.d file overrides a password, keyboard-interactive or root login setting
     quiet: true
   when: not ansible_check_mode

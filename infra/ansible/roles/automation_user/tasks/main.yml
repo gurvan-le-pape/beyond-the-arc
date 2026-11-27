@@ -1,0 +1,35 @@
+---
+# No password: it logs in with the key only, and sudo asks for none.
+- name: Create the automation user
+  ansible.builtin.user:
+    name: "{{ automation_user_name }}"
+    shell: /bin/bash
+    create_home: true
+
+- name: Create its .ssh
+  ansible.builtin.file:
+    path: "/home/{{ automation_user_name }}/.ssh"
+    state: directory
+    owner: "{{ automation_user_name }}"
+    group: "{{ automation_user_name }}"
+    mode: "0700"
+
+- name: Authorise the maintainer's key
+  ansible.posix.authorized_key:
+    user: "{{ automation_user_name }}"
+    key: "{{ automation_user_pubkey }}"
+    # Explicit, so --check works before the user exists.
+    path: "/home/{{ automation_user_name }}/.ssh/authorized_keys"
+    state: present
+    manage_dir: false
+
+# Ansible needs root for nearly every task; the key is the gate, as it is for root.
+- name: Let it use sudo without a password
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ automation_user_name }}"
+    content: |
+      {{ automation_user_name }} ALL=(ALL:ALL) NOPASSWD: ALL
+    owner: root
+    group: root
+    mode: "0440"
+    validate: /usr/sbin/visudo -cqf %s

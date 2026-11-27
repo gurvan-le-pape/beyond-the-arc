@@ -1,0 +1,6 @@
+---
+- name: Configure the Compose host
+  ansible.builtin.import_playbook: compose.yml
+
+- name: Configure the k3s host
+  ansible.builtin.import_playbook: k3s.yml

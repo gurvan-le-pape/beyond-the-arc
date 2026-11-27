@@ -1,12 +1,14 @@
 ---
-packages_wanted:
+packages_base:
   - ca-certificates
   - curl
   - git
-  - nginx
-  - certbot
-  - python3-certbot-nginx
   - unattended-upgrades
+# Per group: what that host runs on top of the base.
+packages_extra: []
+# Docker's apt repository, Docker Engine and the Compose plugin, and the service.
+packages_docker: false
+packages_docker_packages:
   - docker-ce
   - docker-ce-cli
   - containerd.io
