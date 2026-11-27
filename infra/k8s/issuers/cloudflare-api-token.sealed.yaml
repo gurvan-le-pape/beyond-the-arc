@@ -1,0 +1,17 @@
+# The Cloudflare API token cert-manager answers DNS-01 challenges with: DNS edit on the
+# beyondthearc.app zone only, nothing else in the account. Sealed to this cluster's Sealed
+# Secrets key, so only the controller in this cluster can decrypt it, and only as the
+# cloudflare-api-token Secret in cert-manager (strict scope). A new cluster has a new key;
+# seal it again (README, Certificates).
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: cloudflare-api-token
+  namespace: cert-manager
+spec:
+  encryptedData:
+    api-token: AgCaLnuyg7LbNcaQsRm+Y/cdWZcF1lOKRKxsRo8eY75acvA6vqRFyx8+oGt3BS/9x7tG/XMNOkkRTz6xmL/cmSNlR0rQn7Tk6uhiysW9zBBydvZY5/jv9Gc+3PWglAiFTyUSEqW9pBC89QKzQ8Am5K2WoZEM0r+JoAf7dOSXFwOgSNmR/UYJn+aXHg09WP/XoykR8HG9fiKDj7eq/v3tf5nAbpR8f0sh1dRyEMyWLDRJ2n4VOx0W0IfhTLsbiiM/aim1c504wYYBbfHeP0oXB1dGHSjotdA/FSDlU+QEaBy4YgOf9HCBl8HHoFxuJRkQYBb7jOxEZV4aWyik3K+MX+EPxApv2rV2hZ+wmecsxguHsL5HGMhe8+IqeS69PwDlJxZDh3sDXz3AezzM0+gD899T3fEqfxA9Md7bOJKMEwdBFiFbsbImCiy4AdjSwgCL+oUjZBiTCoxvhI09SNo14wKk+iWVE0UrCphAz0itZNx+7X9lhW5BbMDvsmlCJiIkS2kK7EPVdl/OdHGncEtu0DDOvyjujwb2+NgYcSLnhjb+6p/HJizLmOYzbjwAkAV0ENphU4Mx9PvG613ZhgxrCcFaAU/luDr0z/vQBLaqOuJw4RkXYsREz7FCadmFZuFFtL/+oSOACBtOf2+xSK0Nqc3hQJo1dJG8mf/qku5Y+rLbItkmHNaqXEkfJZ9OoMl7qq7aE2RcP3iWCRD1lG+mjhIBM+qhcT2PHqjplp1wPRcO3cNg1QWnHDRXrKEG6ujghSyDBolC4w==
+  template:
+    metadata:
+      name: cloudflare-api-token
+      namespace: cert-manager
