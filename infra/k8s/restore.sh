@@ -10,6 +10,11 @@
 # The database must be empty: on a database that already holds the schema, it stops.
 # To restore again, delete the Cluster and let Argo CD recreate it:
 #   infra/k8s/k.sh kubectl -n bta delete cluster database
+# The old pod can stay Terminating for up to its 30-minute grace period: its instance
+# manager loses access to the API with the Cluster, so it never reports PostgreSQL
+# stopped, and the new Cluster waits for its name. Its data is the data being replaced,
+# so force-deleting it is safe:
+#   infra/k8s/k.sh kubectl -n bta delete pod database-1 --grace-period=0 --force
 #
 # The restore runs as the database's owner, bta, so that bta owns every object, as the
 # application's role will need. It ends with ANALYZE and the figures of

@@ -27,6 +27,8 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 | `observability/` | Grafana, Loki, the blackbox exporter, Alloy and the scrape targets |
 | `apps/values/` | the values of a chart Application, read by it and by `validate.sh` |
 | `arc/` | the GitHub App credentials the runner scale set uses, sealed |
+| `load/` | the k6 scenario latency is measured with |
+| `ASSESSMENT.md` | the phase 4 go/no-go: memory, restore, latency |
 
 ## Running it
 
