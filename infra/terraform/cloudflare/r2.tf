@@ -48,21 +48,22 @@ resource "cloudflare_r2_bucket_lifecycle" "db_backups" {
   account_id   = local.account_id
   bucket_name  = cloudflare_r2_bucket.db_backups.name
   jurisdiction = cloudflare_r2_bucket.db_backups.jurisdiction
+  # In the order the API returns them, or every plan shows a reordering.
   rules = concat(
-    [for prefix, days in local.db_backup_retention_days : {
-      id         = "expire-${prefix}-${days + 1}d"
-      enabled    = true
-      conditions = { prefix = "${prefix}/" }
-      delete_objects_transition = {
-        condition = { type = "Age", max_age = (days + 1) * local.day_seconds }
-      }
-    }],
     [{
       id         = "abort-multipart-1d"
       enabled    = true
       conditions = { prefix = "" }
       abort_multipart_uploads_transition = {
         condition = { type = "Age", max_age = local.day_seconds }
+      }
+    }],
+    [for prefix, days in local.db_backup_retention_days : {
+      id         = "expire-${prefix}-${days + 1}d"
+      enabled    = true
+      conditions = { prefix = "${prefix}/" }
+      delete_objects_transition = {
+        condition = { type = "Age", max_age = (days + 1) * local.day_seconds }
       }
     }],
   )
