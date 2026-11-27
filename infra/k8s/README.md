@@ -24,12 +24,15 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 | `restore.sh` | restores the latest production backup into it |
 | `app/` | the application: a Kustomize base and the lab overlay |
 | `issuers/` | the certificate issuer and the Cloudflare token it uses, sealed |
+| `observability/` | Grafana, Loki, the blackbox exporter, Alloy and the scrape targets |
+| `apps/values/` | the values of a chart Application, read by it and by `validate.sh` |
 
 ## Running it
 
 The tools run only through `k.sh`, in the image built from `Dockerfile`; nothing is
 installed on the machine. The container runs as the calling user, on the host network,
-from this directory:
+from this directory, with the whole repository mounted (`observability/` reads
+production's files under `docker/config/`):
 
 ```bash
 infra/k8s/k.sh k3d cluster create --config lab/cluster.yaml
@@ -78,7 +81,9 @@ root (root.yaml, applied by bootstrap.sh)
     ├── app: app/lab/, backend, frontend, scheduler, the migration and the Ingress (namespace bta)
     ├── cert-manager: the cert-manager chart, with its CRDs (namespace cert-manager)
     ├── sealed-secrets: the Sealed Secrets controller chart (namespace kube-system)
-    └── issuers: issuers/, the ClusterIssuer and the sealed Cloudflare token
+    ├── issuers: issuers/, the ClusterIssuer and the sealed Cloudflare token
+    ├── kube-prometheus-stack: the operator, Prometheus, node-exporter, kube-state-metrics (namespace monitoring)
+    └── observability: observability/, Grafana, Loki, blackbox, Alloy, scrape targets (namespace monitoring)
 ```
 
 `bootstrap.sh` installs the argo-cd chart once, at the version in `apps/values.yaml`,
@@ -237,17 +242,67 @@ The plain Secret exists only in that pipe; kubeseal fetches the public key from 
 controller through the API server. The header comment of the sealed file is written by
 hand.
 
+## Observability
+
+Production's monitoring, on Kubernetes:
+
+| Production (Compose) | Lab |
+|---|---|
+| Prometheus, static scrape configuration | Prometheus under its operator (kube-prometheus-stack): a `ServiceMonitor` for the backend, two `Probe`s for the blackbox jobs |
+| node-exporter, cAdvisor | the chart's node-exporter; the kubelet's cAdvisor |
+| Grafana, provisioning under `docker/config/grafana/` | Grafana with the same files |
+| Loki, `docker/config/loki.yml` | Loki with the same file |
+| blackbox exporter, `docker/config/blackbox.yml` | the same, with the same file |
+| Promtail, through the Docker socket | Alloy, through the API server |
+
+The files are shared, not copied: `observability/kustomization.yaml` builds its
+ConfigMaps from `docker/config/`, so an alert rule or the dashboard changes once for both,
+and the eight rules evaluate here exactly as in production. That needs Kustomize to read
+outside its directory, which Argo CD allows (`argocd/values.yaml`,
+`kustomize.buildOptions`) and `validate.sh` passes. The names production's files use are
+kept: the backend's scrape job is `backend` (a `ServiceMonitor` takes the Service's name),
+the probe jobs are `blackbox-http` and `blackbox-tcp`, a `prometheus` Service fronts the
+operator's Prometheus, and Alloy labels logs with `service`, the pod's
+`app.kubernetes.io/name`, so `{service="backend"}` finds the backend's logs. Grafana's
+datasources get production's UIDs, which the rules name. `containers.json` stays out: it
+reads cAdvisor's Docker Compose labels.
+
+Left out of the chart: Grafana (the one above), Alertmanager and the default rules (the
+alerting is Grafana's, as in production), and the scrape targets k3s does not have
+(etcd, scheduler, controller-manager, kube-proxy). Out as well, the API server's and the
+kubelet's own `/metrics`: k3s runs both in one process, and those two carried 129,000 of
+140,000 series and took Prometheus from 101 to 559 MiB, for histograms nothing here
+reads.
+
+At rest, 2026-11-27: 16 targets up, 10,400 series; six rules Normal. Two fire, and both
+are true of the lab rather than faults: Disk Full finds no `/` filesystem (the k3d node is
+a container whose root node-exporter does not report; on the CX33 it is the host's), and
+Database Backup Missing has no backup to see (the lab has no backup timer; production's
+cluster gets CloudNativePG's). No notification leaves the lab: SMTP is off, so a firing
+rule shows in Grafana and its notification fails in Grafana's log.
+
+```bash
+infra/k8s/k.sh kubectl -n monitoring port-forward svc/grafana 3001:3000   # http://127.0.0.1:3001, admin
+infra/k8s/k.sh kubectl -n monitoring port-forward svc/prometheus 9090:9090
+```
+
+The admin password is generated on the maintainer's machine
+(`~/.config/bta-k8s/grafana-admin.env`, `GRAFANA_ADMIN_PASSWORD=…`, mode 600) and sealed
+in `observability/grafana-admin.sealed.yaml`, resealed like the Cloudflare token.
+
 ## Validation
 
 `validate.sh` checks what reaches the cluster with kubeconform in strict mode: an unknown
 or misspelt field is an error, not a field the API server would silently drop. That is
 the plain manifests (`root.yaml`, `database/`, `issuers/`), the `apps/` chart as `helm
-template` renders it, the application as `kubectl kustomize app/lab` builds it, and each
-upstream chart an Application installs (argo-cd with `argocd/values.yaml`,
-cloudnative-pg, cert-manager, sealed-secrets), at the version `apps/values.yaml` pins.
+template` renders it, `app/lab` and `observability` as `kubectl kustomize` builds them,
+and each upstream chart an Application installs (argo-cd with `argocd/values.yaml`,
+cloudnative-pg, cert-manager, sealed-secrets, kube-prometheus-stack with
+`apps/values/kube-prometheus-stack.yaml`), at the version `apps/values.yaml` pins.
 Kubernetes' own kinds are checked against the schemas of the cluster's version, read from
 the k3s image tag in `lab/cluster.yaml`, from `yannh/kubernetes-json-schema`; custom
-resources (`Application`, `Cluster`, `ClusterIssuer`, `SealedSecret`) against `datreeio/CRDs-catalog`; both at pinned commits. `CustomResourceDefinition` itself
+resources (`Application`, `Cluster`, `ClusterIssuer`, `SealedSecret`, `ServiceMonitor`,
+`Probe`) against `datreeio/CRDs-catalog`; both at pinned commits. `CustomResourceDefinition` itself
 is skipped: its schema is recursive, so no standalone file exists for it, and the CRDs
 come unchanged from upstream charts.
 
@@ -318,6 +373,18 @@ issued:
 | node working set | 3.66 GiB of 8 GiB |
 | anonymous memory | 2.03 GiB (25 %) |
 
+With the observability stack, at rest:
+
+| Measure | Value |
+|---|---|
+| Prometheus, Grafana, Loki, Alloy | 101, 126, 101, 53 MiB |
+| operator, kube-state-metrics, blackbox, node-exporter | 32, 24, 23, 13 MiB |
+| all of `monitoring` | 473 MiB |
+| the k3s process (resident) | 1.66 GiB, from 1.05 with Argo CD alone: the API server holds the operator's CRDs and serves more watches |
+| Argo CD's application controller (resident) | 395 MiB, watching the added resources |
+| node working set | 5.14 GiB of 8 GiB |
+| anonymous memory | 2.97 GiB (37 %) |
+
 Every later stage of the lab is measured against these figures. The phase's no-go
 threshold is idle anonymous memory above 75 % of the 8 GiB, 6 GiB, on the node's cgroup
 (`anon` in `memory.stat`). Not the working set: with a database larger than the memory,
@@ -341,6 +408,9 @@ they place the platform's cost, not production's to the megabyte.
 | cert-manager | v1.21.3 (chart of the same version) | `apps/values.yaml` |
 | Sealed Secrets | 0.41.2, chart 2.22.0 | `apps/values.yaml` (chart); `Dockerfile` (kubeseal, same release) |
 | Traefik | k3s's bundled chart (41.6.1) | the k3s release |
+| kube-prometheus-stack | chart 94.2.0 (operator v0.95.2) | `apps/values.yaml` |
+| Grafana, Loki, blackbox exporter | 13.0.13, 3.7.1, 0.29.1, production's | `observability/` (by digest) |
+| Alloy | v1.22.0 | `observability/alloy.yaml` (by digest) |
 | kubeconform | 0.8.0 | `Dockerfile`; schemas at the commit in `validate.sh` |
 
 A version changes by editing the file, with the sha256 its release publishes; a new k3s

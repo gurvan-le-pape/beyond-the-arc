@@ -294,6 +294,8 @@ What it catches is "5xx responses are being served at all, steadily". The trade-
 
 The rules are provisioned from `docker/config/grafana/provisioning/alerting/rules.yml`. **Grafana reads that file only at startup.** `docker compose up -d` recreates a container only when its *configuration* changes, and the provisioning directory is a bind mount whose file contents are not part of that hash — so an alerting change reaches the VPS and does nothing until Grafana restarts. Datasources (`provisioning/datasources/`) are read the same way. The deploy therefore restarts Grafana when, and only when, a deploy actually changes anything under `provisioning/alerting/` or `provisioning/datasources/`; a restart resets the `for:` clocks, which run 2–10 minutes, so it is not done unconditionally.
 
+The k3s lab reads the same files (`infra/k8s/observability/`, see `infra/k8s/README.md`): its ConfigMaps are built from `docker/config/grafana/provisioning/`, `loki.yml` and `blackbox.yml`, so a change here reaches the lab too. There the ConfigMap's name carries a hash of its contents, so a changed file renames it and restarts Grafana on the next sync.
+
 Dashboards need no equivalent: their provider sets no `updateIntervalSeconds`, so Grafana's own poll picks up changes to the dashboard JSON without a restart.
 
 The backend exposes three health endpoints under `/api/health`:
