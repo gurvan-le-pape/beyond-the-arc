@@ -65,7 +65,7 @@
     - name: Test Nginx's configuration with the site
       ansible.builtin.command:
         argv: [nginx, -t, -q]
-      changed_when: false
+      changed_when: true
       when: nginx_site_link is changed and not ansible_check_mode
       notify: Check and reload Nginx
   rescue:
