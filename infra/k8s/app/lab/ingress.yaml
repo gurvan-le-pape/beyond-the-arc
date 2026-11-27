@@ -1,0 +1,39 @@
+# lab.beyondthearc.app through k3s's Traefik, routed as production's Nginx routes it: /api
+# to the backend, which serves its routes and Swagger under that prefix, everything else
+# to the frontend. The certificate is cert-manager's, from the issuer the annotation
+# names, kept in the lab-tls Secret and renewed before it expires.
+#
+# The name has no public DNS record pointing here; a client resolves it to the lab itself:
+#   curl --resolve lab.beyondthearc.app:8443:127.0.0.1 https://lab.beyondthearc.app:8443/en
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app
+  labels:
+    app.kubernetes.io/part-of: beyond-the-arc
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - lab.beyondthearc.app
+      secretName: lab-tls
+  rules:
+    - host: lab.beyondthearc.app
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  name: http
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  name: http

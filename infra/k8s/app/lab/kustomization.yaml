@@ -6,18 +6,19 @@ kind: Kustomization
 namespace: bta
 resources:
   - ../base
+  - ingress.yaml
 # A changed value renames the ConfigMap (a hash suffix), which rolls the pods that use it.
 configMapGenerator:
   - name: app
     literals:
       - FRONTEND_URL=https://lab.beyondthearc.app
-# main at 5e0f5547.
+# main at 5b891df7.
 images:
   - name: ghcr.io/gurvan-le-pape/beyond-the-arc/backend
-    digest: sha256:596d50ac79ae85f9fe69ef49bfe5deceb50697b97a0aba9ab4b4f9e6728e2b8e
+    digest: sha256:4607421d084d36dc7f1180df13cf1b3df6a2b1568be227c18691f51c54d915eb
   - name: ghcr.io/gurvan-le-pape/beyond-the-arc/backend-migrate
-    digest: sha256:86d7774762a434397d97f4b440b84b6630073e93a9e2f661762b161fe1cb1052
+    digest: sha256:8d63a170413eb247d17aaff04c8dbdba9473ccd8475fa54c761ccbcd8109960f
   - name: ghcr.io/gurvan-le-pape/beyond-the-arc/frontend
-    digest: sha256:a8751dc0057a7d173a18665dc4ebf45814ba1ea3cb3ffe70d5986e5ed6f34bec
+    digest: sha256:b17bb51d1064abc95590e0a3d429d281a059491fe8003a5ef4605c1397d4c72a
   - name: ghcr.io/gurvan-le-pape/beyond-the-arc/scheduler
-    digest: sha256:d911798993d9d9d0c872cd551218a28d4a0a16cbe8b910c986c3351ee1e329ab
+    digest: sha256:2ae8f3ccbbaa6ddf7110e3e141c2e28b091ac2e0f5ae12a9772fec14e62f5261
