@@ -5,8 +5,9 @@
 # CI through scripts/ci/lint-infra.sh.
 #
 # What is validated is what reaches the cluster: the plain manifests as they are, the apps
-# chart as helm template renders it, and each upstream chart an Application installs,
-# rendered at its pinned version with the values this repository gives it.
+# chart as helm template renders it, the application as its lab overlay builds it, and
+# each upstream chart an Application installs, rendered at its pinned version with the
+# values this repository gives it.
 # Kubernetes' own kinds are checked against yannh/kubernetes-json-schema, custom resources
 # against datreeio/CRDs-catalog, both at pinned commits, so a run needs a network but reads
 # the same schemas every time. The version comes from the k3s image tag in
@@ -22,6 +23,7 @@ crds=https://raw.githubusercontent.com/datreeio/CRDs-catalog/d330ce2bbe064d75a1f
 rendered=$(mktemp -d)
 trap 'rm -rf "$rendered"' EXIT
 helm template apps apps > "$rendered/apps.yaml"
+kubectl kustomize app/lab > "$rendered/app-lab.yaml"
 
 # An upstream chart, at the version apps/values.yaml pins for its Application:
 # render <name> <repository> <chart> <namespace> [helm flags...]
@@ -36,8 +38,9 @@ render() {
 render argocd https://argoproj.github.io/argo-helm argo-cd argocd -f argocd/values.yaml
 render cnpg https://cloudnative-pg.github.io/charts cloudnative-pg cnpg-system
 
-# Plain manifests: every YAML file outside the charts, the values files and k3d's config.
-mapfile -t manifests < <(find . \( -path ./apps -o -path ./argocd -o -path ./lab \) -prune -o \
+# Plain manifests: every YAML file outside the charts, the values files, the Kustomize
+# tree and k3d's config.
+mapfile -t manifests < <(find . \( -path ./app -o -path ./apps -o -path ./argocd -o -path ./lab \) -prune -o \
   -type f \( -name '*.yaml' -o -name '*.yml' \) -print | sort)
 
 # CustomResourceDefinition is skipped: its schema is recursive (a CRD's schema describes

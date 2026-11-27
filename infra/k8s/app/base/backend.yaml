@@ -1,0 +1,103 @@
+# The NestJS API. DATABASE_URL is the uri key of the database-app Secret CloudNativePG
+# writes for the bta role, so the password never leaves the cluster. FRONTEND_URL, its
+# only CORS origin, comes from the overlay's app ConfigMap. No SENTRY_DSN: unset, the SDK
+# sends nothing, and an environment that is not production keeps out of its issues.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app.kubernetes.io/name: backend
+    app.kubernetes.io/part-of: beyond-the-arc
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  # The new pod has to be ready before the old one stops: a deploy no longer opens the
+  # window of 502s that recreating the compose container does.
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: backend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: backend
+        app.kubernetes.io/part-of: beyond-the-arc
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000 # node, which the image names but not by number
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: backend
+          image: ghcr.io/gurvan-le-pape/beyond-the-arc/backend
+          ports:
+            - name: http
+              containerPort: 4000
+          envFrom:
+            - configMapRef:
+                name: app
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-app
+                  key: uri
+          # /api/health pings the database and checks the heap and the disk, and answers
+          # 503 when one fails: that takes the pod out of the Service. Liveness only asks
+          # whether the process listens, so a database outage does not restart a backend
+          # that would be fine once the database is back.
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 2
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  labels:
+    app.kubernetes.io/name: backend
+    app.kubernetes.io/part-of: beyond-the-arc
+spec:
+  selector:
+    app.kubernetes.io/name: backend
+  ports:
+    - name: http
+      port: 4000
+      targetPort: http
