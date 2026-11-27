@@ -1,3 +1,18 @@
+# The components this cluster runs, one per Application (argocd always runs). These
+# defaults are the lab's, which runs everything; values-production.yaml switches off
+# what production does not run yet. root.yaml reads that file on production only
+# (bootstrap.sh, BTA_CLUSTER).
+components:
+  sealedSecrets: true
+  cnpg: true
+  database: true
+  app: true
+  certManager: true
+  issuers: true
+  kubePrometheusStack: true
+  observability: true
+  arc: true
+
 # The repository and revision every Application reads from. root.yaml leaves them at
 # these defaults; bootstrap.sh overrides targetRevision to try a branch.
 repoURL: https://github.com/gurvan-le-pape/beyond-the-arc.git

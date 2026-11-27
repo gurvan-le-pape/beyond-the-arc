@@ -1,4 +1,5 @@
 # The certificate issuers and the Cloudflare token they use (../../issuers/).
+{{- if .Values.components.issuers }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -28,3 +29,4 @@ spec:
         duration: 10s
         factor: 2
         maxDuration: 3m
+{{- end }}

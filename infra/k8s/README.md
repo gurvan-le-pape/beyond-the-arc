@@ -16,12 +16,14 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 | `k.sh` | runs one of those tools in that image |
 | `validate.sh` | validates the manifests with kubeconform |
 | `lab/cluster.yaml` | the lab cluster, as k3d's configuration |
+| `tunnel.sh` | production's API through SSH, and its kubeconfig |
 | `bootstrap.sh` | installs Argo CD and hands it the root Application |
 | `root.yaml` | the root Application, which renders `apps/` |
-| `apps/` | the app of apps: a chart with one Application per component |
+| `apps/` | the app of apps: a chart with one Application per component; `values-production.yaml` is what production runs |
 | `argocd/values.yaml` | the argo-cd chart's values, for the install and for every sync after it |
 | `database/` | the application's PostgreSQL, a CloudNativePG `Cluster` |
 | `restore.sh` | restores the latest production backup into it |
+| `sealed-secrets-key.sh` | backs up the Sealed Secrets controller's keys, encrypted, here and on R2 |
 | `app/` | the application: a Kustomize base and the lab overlay |
 | `issuers/` | the certificate issuer and the Cloudflare token it uses, sealed |
 | `observability/` | Grafana, Loki, the blackbox exporter, Alloy and the scrape targets |
@@ -69,6 +71,45 @@ machine:
 Only `k3d` gets the Docker socket, which it needs to create the node containers; kubectl,
 Helm and the others reach the cluster through the API server alone. k3d's helper image
 (`k3d-tools`) is pinned by digest in `k.sh`, since k3d otherwise pulls it by tag.
+
+## Production
+
+`bta-prod-k3s`, the CX33, runs k3s from the Ansible role (`../ansible/README.md`) and is
+driven from here like the lab, with `BTA_CLUSTER=production` in front of `k.sh` and of
+the scripts that call it. Its API is not exposed: `tunnel.sh` forwards it over SSH.
+
+```bash
+infra/k8s/tunnel.sh kubeconfig                    # once, and after k3s's certificates change
+infra/k8s/tunnel.sh up                            # 127.0.0.1:16443, in the background
+BTA_CLUSTER=production infra/k8s/k.sh kubectl get nodes
+BTA_CLUSTER=production infra/k8s/k.sh ./bootstrap.sh
+infra/k8s/tunnel.sh down
+```
+
+`k.sh` reads `~/.config/bta-k8s/production.kubeconfig` for it (contexts named
+`bta-prod`), refuses `k3d`, and stops if the tunnel is down. `bootstrap.sh` hands root
+`apps/values-production.yaml`, which switches off what production does not run yet:
+phase 5 brings it up in steps (`ASSESSMENT.md`), the database first. The ARC runners stay
+off until CI builds images without the Docker socket.
+
+Production's Argo CD follows `main` like the lab's, so a merge touching `infra/k8s`
+reaches both.
+
+### The Sealed Secrets keys
+
+Every sealed file is encrypted to one cluster's controller key, which exists nowhere
+else: the lab's sealed files mean nothing to production, and a cluster lost without its
+key means sealing everything again. The controller makes no new key on its own
+(`keyrenewperiod: "0"`), so one backup stays valid until a rotation done by hand:
+
+```bash
+BTA_CLUSTER=production infra/k8s/sealed-secrets-key.sh
+```
+
+It encrypts the key Secrets with age to the database backups' public key and keeps them
+in `~/.config/bta-k8s/` and under `sealed-secrets/<cluster>/` in the `bta-db-backups`
+bucket, outside its lifecycle rules, then checks that the R2 copy decrypts to what was
+exported. How to restore them is at the top of the script.
 
 ## Argo CD
 

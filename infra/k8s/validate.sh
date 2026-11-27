@@ -23,6 +23,7 @@ crds=https://raw.githubusercontent.com/datreeio/CRDs-catalog/d330ce2bbe064d75a1f
 rendered=$(mktemp -d)
 trap 'rm -rf "$rendered"' EXIT
 helm template apps apps > "$rendered/apps.yaml"
+helm template apps apps -f apps/values-production.yaml > "$rendered/apps-production.yaml"
 kubectl kustomize app/lab > "$rendered/app-lab.yaml"
 # observability/ reads production's files under docker/config/, as Argo CD lets it
 # (argocd/values.yaml, kustomize.buildOptions).
@@ -48,7 +49,7 @@ render cnpg cnpg https://cloudnative-pg.github.io/charts cloudnative-pg cnpg-sys
 render certManager cert-manager https://charts.jetstack.io cert-manager cert-manager \
   --set crds.enabled=true --set startupapicheck.enabled=false
 render sealedSecrets sealed-secrets https://bitnami.github.io/sealed-secrets sealed-secrets \
-  kube-system --set fullnameOverride=sealed-secrets-controller
+  kube-system --set fullnameOverride=sealed-secrets-controller --set-string keyrenewperiod=0
 render kubePrometheusStack kps https://prometheus-community.github.io/helm-charts \
   kube-prometheus-stack monitoring -f apps/values/kube-prometheus-stack.yaml
 render arc arc oci://ghcr.io/actions/actions-runner-controller-charts \

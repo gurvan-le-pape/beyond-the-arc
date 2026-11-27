@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Restores the latest production backup into the lab's database: infra/k8s/restore.sh [daily|weekly]
+#   BTA_CLUSTER=production infra/k8s/restore.sh    # into production's cluster instead (k.sh)
 #
 # Runs on the maintainer's machine, not in the cluster: the backup is encrypted to the
 # maintainer's age key, and that key stays on this machine. The dump is streamed from R2
