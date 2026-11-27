@@ -26,6 +26,7 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 | `issuers/` | the certificate issuer and the Cloudflare token it uses, sealed |
 | `observability/` | Grafana, Loki, the blackbox exporter, Alloy and the scrape targets |
 | `apps/values/` | the values of a chart Application, read by it and by `validate.sh` |
+| `arc/` | the GitHub App credentials the runner scale set uses, sealed |
 
 ## Running it
 
@@ -83,7 +84,9 @@ root (root.yaml, applied by bootstrap.sh)
     ├── sealed-secrets: the Sealed Secrets controller chart (namespace kube-system)
     ├── issuers: issuers/, the ClusterIssuer and the sealed Cloudflare token
     ├── kube-prometheus-stack: the operator, Prometheus, node-exporter, kube-state-metrics (namespace monitoring)
-    └── observability: observability/, Grafana, Loki, blackbox, Alloy, scrape targets (namespace monitoring)
+    ├── observability: observability/, Grafana, Loki, blackbox, Alloy, scrape targets (namespace monitoring)
+    ├── arc-controller: the Actions Runner Controller chart (namespace arc-systems)
+    └── arc-runners: the bta-lab runner scale set chart, and arc/ (namespace arc-runners)
 ```
 
 `bootstrap.sh` installs the argo-cd chart once, at the version in `apps/values.yaml`,
@@ -290,19 +293,65 @@ The admin password is generated on the maintainer's machine
 (`~/.config/bta-k8s/grafana-admin.env`, `GRAFANA_ADMIN_PASSWORD=…`, mode 600) and sealed
 in `observability/grafana-admin.sealed.yaml`, resealed like the Cloudflare token.
 
+## Runners
+
+GitHub Actions runners from the Actions Runner Controller (ARC): the controller
+(`arc-controller`), and one runner scale set (`arc-runners`, values in
+`apps/values/arc-runners.yaml`), registered on the repository as `bta-lab`. A listener
+pod holds a long-poll session with GitHub; when a job with `runs-on: bta-lab` is queued,
+the controller creates a runner pod for it and deletes the pod when the job ends. None
+run at rest, two at most. The runner pod runs the job in its own container: no Docker
+daemon, no Kubernetes API token, no capability.
+
+That is the opposite of the current runners (`docs/ci-cd.md`, Runners): four persistent
+containers on the same machine, holding the host's Docker socket, which is root on it.
+An ephemeral runner leaves nothing from one job to the next, and a job that escapes its
+container reaches a pod with no privilege rather than the Docker daemon. What CI still
+needs from Docker (building and starting the images) is not solved here; it is the next
+step of moving CI to these runners.
+
+Only `.github/workflows/lab-runner.yml` targets `bta-lab`, by hand. It needs the lab up;
+without it, the job waits in GitHub's queue.
+
+```bash
+gh workflow run lab-runner.yml
+infra/k8s/k.sh kubectl -n arc-runners get pods -w
+```
+
+The scale set authenticates as a GitHub App, `bta-arc-lab`, installed on this repository
+only, with Administration write (the narrowest permission GitHub offers for repository
+runners; it also covers the repository's settings, so the key is a secret to guard) and
+no webhook. The controller exchanges the App's key for one-hour installation tokens. The
+id, installation id and key are in Git only sealed (`arc/arc-github-app.sealed.yaml`); the
+plain files are `~/.config/bta-k8s/arc-app.env` (`ARC_APP_ID=…`, `ARC_INSTALLATION_ID=…`)
+and `~/.config/bta-k8s/arc-app.pem`, mode 600. To seal them again:
+
+```bash
+cd infra/k8s && ./k.sh sh -c ". $HOME/.config/bta-k8s/arc-app.env &&
+  kubectl create secret generic arc-github-app --namespace arc-runners \
+    --from-literal=github_app_id=\"\$ARC_APP_ID\" \
+    --from-literal=github_app_installation_id=\"\$ARC_INSTALLATION_ID\" \
+    --from-file=github_app_private_key=$HOME/.config/bta-k8s/arc-app.pem \
+    --dry-run=client -o json |
+  kubeseal --format yaml" > arc/arc-github-app.sealed.yaml
+```
+
+ARC's charts are published only to an OCI registry, which Argo CD reads as a repository
+declared in `argocd/values.yaml` (public, no credentials).
+
 ## Validation
 
 `validate.sh` checks what reaches the cluster with kubeconform in strict mode: an unknown
 or misspelt field is an error, not a field the API server would silently drop. That is
-the plain manifests (`root.yaml`, `database/`, `issuers/`), the `apps/` chart as `helm
+the plain manifests (`root.yaml`, `database/`, `issuers/`, `arc/`), the `apps/` chart as `helm
 template` renders it, `app/lab` and `observability` as `kubectl kustomize` builds them,
 and each upstream chart an Application installs (argo-cd with `argocd/values.yaml`,
 cloudnative-pg, cert-manager, sealed-secrets, kube-prometheus-stack with
-`apps/values/kube-prometheus-stack.yaml`), at the version `apps/values.yaml` pins.
+`apps/values/kube-prometheus-stack.yaml`, ARC's two charts with theirs), at the version `apps/values.yaml` pins.
 Kubernetes' own kinds are checked against the schemas of the cluster's version, read from
 the k3s image tag in `lab/cluster.yaml`, from `yannh/kubernetes-json-schema`; custom
 resources (`Application`, `Cluster`, `ClusterIssuer`, `SealedSecret`, `ServiceMonitor`,
-`Probe`) against `datreeio/CRDs-catalog`; both at pinned commits. `CustomResourceDefinition` itself
+`Probe`, `AutoscalingRunnerSet`) against `datreeio/CRDs-catalog`; both at pinned commits. `CustomResourceDefinition` itself
 is skipped: its schema is recursive, so no standalone file exists for it, and the CRDs
 come unchanged from upstream charts.
 
@@ -411,6 +460,8 @@ they place the platform's cost, not production's to the megabyte.
 | kube-prometheus-stack | chart 94.2.0 (operator v0.95.2) | `apps/values.yaml` |
 | Grafana, Loki, blackbox exporter | 13.0.13, 3.7.1, 0.29.1, production's | `observability/` (by digest) |
 | Alloy | v1.22.0 | `observability/alloy.yaml` (by digest) |
+| Actions Runner Controller | 0.15.1, both charts | `apps/values.yaml` |
+| Actions runner | 2.338.2 | `apps/values/arc-runners.yaml` (by digest) |
 | kubeconform | 0.8.0 | `Dockerfile`; schemas at the commit in `validate.sh` |
 
 A version changes by editing the file, with the sha256 its release publishes; a new k3s

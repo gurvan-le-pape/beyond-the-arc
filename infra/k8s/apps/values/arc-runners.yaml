@@ -1,0 +1,35 @@
+# The gha-runner-scale-set chart's values, read by templates/arc-runners.yaml and by
+# ../../validate.sh.
+#
+# One scale set, registered on the repository as bta-lab: a job with `runs-on: bta-lab`
+# lands here, and nothing else does. A runner is a pod created for one job and deleted
+# after it (ephemeral), none at rest, two at most.
+githubConfigUrl: https://github.com/gurvan-le-pape/beyond-the-arc
+# The GitHub App's id, installation id and private key (../../arc/, sealed).
+githubConfigSecret: arc-github-app
+runnerScaleSetName: bta-lab
+minRunners: 0
+maxRunners: 2
+# The controller's service account, which the chart cannot find across namespaces.
+controllerServiceAccount:
+  namespace: arc-systems
+  name: arc-gha-rs-controller
+# No container mode: a job runs in the runner's own container, with no Docker daemon and
+# no access to the Kubernetes API.
+template:
+  spec:
+    automountServiceAccountToken: false
+    containers:
+      - name: runner
+        image: ghcr.io/actions/actions-runner:2.338.2@sha256:6d0b2d80d80f143f77dcb676e50920100bbb547e39e883454d57f45ab8c31300
+        command: ["/home/runner/run.sh"]
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            memory: 2Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]

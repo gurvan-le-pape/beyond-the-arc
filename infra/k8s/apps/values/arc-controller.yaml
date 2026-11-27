@@ -1,0 +1,4 @@
+# The gha-runner-scale-set-controller chart's values, read by
+# templates/arc-controller.yaml and by ../../validate.sh. The chart's defaults: one
+# controller, which watches every namespace for runner scale sets.
+{}

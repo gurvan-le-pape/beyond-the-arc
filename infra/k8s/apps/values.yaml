@@ -23,3 +23,8 @@ sealedSecrets:
 # Prometheus, its operator, node-exporter and kube-state-metrics.
 kubePrometheusStack:
   chartVersion: 94.2.0
+
+# Actions Runner Controller: the controller chart and the runner scale set chart, one
+# release.
+arc:
+  chartVersion: 0.15.1

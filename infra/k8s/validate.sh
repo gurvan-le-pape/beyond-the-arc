@@ -31,12 +31,15 @@ kubectl kustomize --load-restrictor LoadRestrictionsNone observability > "$rende
 # An upstream chart, at the version apps/values.yaml pins for its Application, with the
 # values that Application gives it:
 # render <key in apps/values.yaml> <release> <repository> <chart> <namespace> [helm flags...]
+# An oci:// repository is a registry path, which the chart's name completes.
 render() {
   local key="$1" release="$2" repo="$3" chart="$4" namespace="$5" version
   shift 5
   version=$(sed -n "/^$key:/,/^[^ ]/s/^  chartVersion: *//p" apps/values.yaml)
   [ -n "$version" ] || { echo "validate.sh: no $key.chartVersion in apps/values.yaml" >&2; exit 1; }
-  helm template "$release" "$chart" --repo "$repo" --version "$version" --namespace "$namespace" \
+  local source=("$chart" --repo "$repo")
+  [[ $repo == oci://* ]] && source=("$repo/$chart")
+  helm template "$release" "${source[@]}" --version "$version" --namespace "$namespace" \
     "$@" > "$rendered/$release.yaml"
 }
 render argocd argocd https://argoproj.github.io/argo-helm argo-cd argocd -f argocd/values.yaml
@@ -48,6 +51,10 @@ render sealedSecrets sealed-secrets https://bitnami.github.io/sealed-secrets sea
   kube-system --set fullnameOverride=sealed-secrets-controller
 render kubePrometheusStack kps https://prometheus-community.github.io/helm-charts \
   kube-prometheus-stack monitoring -f apps/values/kube-prometheus-stack.yaml
+render arc arc oci://ghcr.io/actions/actions-runner-controller-charts \
+  gha-runner-scale-set-controller arc-systems -f apps/values/arc-controller.yaml
+render arc bta-lab oci://ghcr.io/actions/actions-runner-controller-charts \
+  gha-runner-scale-set arc-runners -f apps/values/arc-runners.yaml
 
 # Plain manifests: every YAML file outside the charts, the values files, the Kustomize
 # tree and k3d's config.

@@ -16,3 +16,11 @@ configs:
     # its own directory, which Kustomize refuses by default. Every path stays inside this
     # repository, which Argo CD checks out whole.
     kustomize.buildOptions: --load-restrictor LoadRestrictionsNone
+  # ARC's charts are published only as OCI artifacts, which Argo CD reads from a
+  # repository declared as such. Public: no credentials.
+  repositories:
+    arc-charts:
+      name: arc
+      type: helm
+      url: ghcr.io/actions/actions-runner-controller-charts
+      enableOCI: "true"

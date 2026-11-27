@@ -1,0 +1,28 @@
+# The Actions Runner Controller, which scales runner scale sets (arc-runners.yaml) from
+# the jobs GitHub queues for them.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: arc-controller
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/actions/actions-runner-controller-charts
+    chart: gha-runner-scale-set-controller
+    targetRevision: {{ .Values.arc.chartVersion }}
+    helm:
+      releaseName: arc
+      valuesObject:
+        {{- .Files.Get "values/arc-controller.yaml" | nindent 8 }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: arc-systems
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      # The CRDs are larger than the annotation client-side apply records.
+      - ServerSideApply=true
