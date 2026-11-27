@@ -1,0 +1,12 @@
+---
+# The k3s release, the same as the lab's node image (../../../k8s/lab/cluster.yaml), and
+# the sha256 of its amd64 binary from that release's sha256sum-amd64.txt. An upgrade
+# changes both, and the binary is replaced and the service restarted.
+k3s_version: v1.37.2+k3s1
+k3s_sha256: 265b3ee6a3198ef14033c63ef46cbb32370d83795199fb6d1b01f21575eddbda
+
+# k3s's own settings, written to /etc/rancher/k3s/config.yaml. Everything else is k3s's
+# default, as in the lab: Traefik, ServiceLB, local-path storage, the SQLite datastore.
+k3s_config:
+  node-name: "{{ inventory_hostname }}"
+  write-kubeconfig-mode: "0600"
