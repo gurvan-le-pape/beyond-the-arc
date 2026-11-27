@@ -83,7 +83,7 @@ Runs `npm run quality:deps` from the repo root: dependency-cruiser (`.dependency
 
 ### infra
 
-`scripts/ci/lint-infra.sh`, which runs locally too, from the repo root: actionlint and zizmor over the workflows, shellcheck over every `.sh` file. The three images are pinned by digest and run without a network. zizmor blocks on medium and above; a finding accepted on purpose gets a `# zizmor: ignore[rule]` comment saying why. Every checkout sets `persist-credentials: false`, which zizmor requires, so the job's token is not left in `.git/config`.
+`scripts/ci/lint-infra.sh`, which runs locally too, from the repo root: actionlint and zizmor over the workflows, shellcheck over every `.sh` file. The three images are pinned by digest and run without a network. After them, each infrastructure tool runs in the image its wrapper uses locally: Terraform `fmt` and `validate` on every stack (`infra/terraform/`, no backend, no credentials); `ansible-lint` and `--syntax-check` on every playbook (`infra/ansible/`, built with a network, linted without); kubeconform on the Kubernetes manifests (`infra/k8s/`, with a network for the schemas). None of them reaches a server or a cluster. zizmor blocks on medium and above; a finding accepted on purpose gets a `# zizmor: ignore[rule]` comment saying why. Every checkout sets `persist-credentials: false`, which zizmor requires, so the job's token is not left in `.git/config`.
 
 ### npm-audit
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Lints the workflows (actionlint, zizmor), the shell scripts (shellcheck), the
-# Terraform stacks (fmt, validate) and the Ansible code (ansible-lint, syntax check).
+# Terraform stacks (fmt, validate), the Ansible code (ansible-lint, syntax check) and the
+# Kubernetes manifests (kubeconform).
 # Every linter runs even if an earlier one failed. Run from the repo root.
 #
 # The files are copied into each container instead of mounted: a CI runner is itself
@@ -67,6 +68,22 @@ if docker build -q --build-arg UID=0 -t "$ansible_image" infra/ansible > /dev/nu
       ansible-playbook --syntax-check "$playbook" || exit 1
     done')
   git ls-files -z -- infra/ansible | tar --null -T - --transform 's,^,repo/,' -cf - |
+    docker cp -q - "$container:/"
+  docker start -a "$container" || failed=1
+  docker rm -fv "$container" > /dev/null
+  container=""
+else
+  failed=1
+fi
+
+# The Kubernetes manifests run through kubeconform in the image k.sh builds locally. Both
+# the build and the validation need a network: the binaries, then the schemas at the
+# commit validate.sh pins.
+echo "== kubernetes"
+k8s_image="bta-k8s:$(sha256sum < infra/k8s/Dockerfile | cut -c1-12)"
+if docker build -q -t "$k8s_image" infra/k8s > /dev/null; then
+  container=$(docker create -w /repo/infra/k8s "$k8s_image" ./validate.sh)
+  git ls-files -z -- infra/k8s | tar --null -T - --transform 's,^,repo/,' -cf - |
     docker cp -q - "$container:/"
   docker start -a "$container" || failed=1
   docker rm -fv "$container" > /dev/null

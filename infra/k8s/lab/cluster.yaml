@@ -1,0 +1,38 @@
+# The lab cluster, on the maintainer's machine: k3s in Docker through k3d.
+#   infra/k8s/k.sh k3d cluster create --config lab/cluster.yaml
+#
+# Shaped like the production host it rehearses (bta-prod-k3s, a CX33): one server node,
+# no agent, capped at the CX33's 8 GB, and the same k3s release the Ansible role will
+# install there. k3d's load balancer container is left out, since production has none in
+# front of its node: the ports below map straight to the server.
+#
+# The k3s image is the cluster's Kubernetes version: kubeconform validates the manifests
+# against the version in its tag (scripts/ci/lint-infra.sh), and kubectl in ../Dockerfile
+# stays within one minor version of it.
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: bta-lab
+servers: 1
+agents: 0
+image: rancher/k3s:v1.37.2-k3s1@sha256:21ea6e0fac4e3930c2ce8aa40ddd41a8b18cb3e9a0222c030dc005e7e88c4332
+kubeAPI:
+  host: 127.0.0.1
+  hostIP: 127.0.0.1
+  hostPort: "6550"
+# Traefik's entry points, on loopback and off the ports the Compose stack may hold.
+ports:
+  - port: 127.0.0.1:8080:80
+    nodeFilters: [server:0:direct]
+  - port: 127.0.0.1:8443:443
+    nodeFilters: [server:0:direct]
+options:
+  k3d:
+    wait: true
+    timeout: 180s
+    disableLoadbalancer: true
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true
+  runtime:
+    serversMemory: 8G
