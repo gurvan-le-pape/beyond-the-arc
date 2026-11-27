@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  author: beyond-the-arc
+  description: Mounts the Hetzner data volume under Docker's volumes before Docker can start
+  license: MIT
+  min_ansible_version: "2.22"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - noble
+dependencies: []

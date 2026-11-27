@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  author: beyond-the-arc
+  description: Nginx enabled, server_tokens off, the site linked from the deploy clone
+  license: MIT
+  min_ansible_version: "2.22"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - noble
+dependencies: []

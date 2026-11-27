@@ -1,0 +1,11 @@
+---
+- name: Check and reload Nginx
+  ansible.builtin.command:
+    argv: [nginx, -t, -q]
+  changed_when: false
+  notify: Reload Nginx
+
+- name: Reload Nginx
+  ansible.builtin.systemd_service:
+    name: nginx
+    state: reloaded

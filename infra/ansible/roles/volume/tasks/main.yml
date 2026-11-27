@@ -1,0 +1,58 @@
+---
+# First role of the play: Docker must never start before the volume is mounted, or
+# PostgreSQL initialises an empty database on the root disk. Never formats a disk,
+# never rewrites an fstab entry that points elsewhere.
+- name: Read the fstab entry for the volume mount point
+  ansible.builtin.command:
+    argv: [awk, -v, "m={{ volume_mount }}", '$1 !~ /^#/ && $2 == m { print $1 }', /etc/fstab]
+  register: volume_fstab
+  changed_when: false
+  check_mode: false
+
+- name: Refuse an fstab entry that mounts another device there
+  ansible.builtin.assert:
+    that: volume_fstab.stdout in ['', volume_device]
+    fail_msg: >-
+      /etc/fstab mounts {{ volume_mount }} from {{ volume_fstab.stdout }}, not
+      {{ volume_device }}: left as is, fix it by hand
+    quiet: true
+
+- name: Check the device before the first fstab entry
+  when: volume_fstab.stdout == ''
+  block:
+    - name: Read the volume's filesystem type
+      ansible.builtin.command:
+        argv: [blkid, -o, value, -s, TYPE, "{{ volume_device }}"]
+      register: volume_fstype
+      changed_when: false
+      failed_when: false
+      check_mode: false
+
+    - name: Refuse a volume that is missing or holds no ext4 filesystem
+      ansible.builtin.assert:
+        that: volume_fstype.stdout == 'ext4'
+        fail_msg: >-
+          {{ volume_device }} is missing or holds no ext4 filesystem. If the volume is
+          attached, new and empty: mkfs.ext4 {{ volume_device }}, then run again
+        quiet: true
+
+- name: Mount the volume
+  ansible.posix.mount:
+    path: "{{ volume_mount }}"
+    src: "{{ volume_device }}"
+    fstype: ext4
+    opts: defaults,nofail
+    dump: "0"
+    passno: "2"
+    state: mounted
+
+- name: Make Docker require the volume
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/docker.service.d/require-volumes.conf
+    content: |
+      [Unit]
+      RequiresMountsFor={{ volume_mount }}
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload systemd

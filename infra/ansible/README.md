@@ -12,6 +12,31 @@ role lands, the script stays the reference and only the Ansible side changes.
 On `bta-prod-compose`, a playbook runs with `--check --diff` only, unless the maintainer
 has said otherwise for that run.
 
+## Playbooks
+
+`playbooks/compose.yml` configures `bta-prod-compose`. Its roles port
+`docker/provision/provision.sh` section by section, in the script's order, and keep its
+guards: the data volume comes first so that Docker never starts without it; nothing
+formats a disk; an fstab entry, a clone or a site path it did not write stops the run
+instead of being rewritten.
+
+| Role | provision.sh section |
+|---|---|
+| `volume` | Data volume (fstab, mount, Docker's `RequiresMountsFor`) |
+| `swap` | Swap and swappiness |
+| `journald` | journald size |
+| `packages` | Packages (Docker's apt repository, wanted and unwanted packages, no snapd), Docker service |
+| `unattended_upgrades` | Unattended security upgrades |
+| `ssh_hardening` | SSH: keys only, checked on `sshd -T` |
+| `deploy_user` | The deploy user, its key, its Nginx sudoers rule |
+| `app` | Deploy clone, `.env` check, `postgres_data` volume |
+| `nginx` | Nginx service, `server_tokens off`, site link |
+| `postgres_backup` | (not in the script) nightly backup to R2 |
+
+Until `provision.sh` is deleted, both describe the host; change the Ansible side only.
+Both report no change on `bta-prod-compose` (`provision.sh --check` and
+`compose.yml --check --diff`, 2026-11-27).
+
 ## Running it
 
 Ansible runs only on the maintainer's machine, through `ansible.sh`, in the image built

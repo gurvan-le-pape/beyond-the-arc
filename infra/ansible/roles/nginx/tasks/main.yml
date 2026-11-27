@@ -1,0 +1,79 @@
+---
+# Nginx itself is installed by the packages role.
+- name: Enable and start Nginx
+  ansible.builtin.systemd_service:
+    name: nginx
+    enabled: true
+    state: started
+
+- name: Look for a server_tokens line in nginx.conf
+  ansible.builtin.command:
+    argv: [grep, -Ec, '^\s*#?\s*server_tokens\s+off;', /etc/nginx/nginx.conf]
+  register: nginx_tokens_line
+  changed_when: false
+  failed_when: nginx_tokens_line.rc > 1
+  check_mode: false
+
+- name: Refuse an nginx.conf with no server_tokens line to switch on
+  ansible.builtin.assert:
+    that: nginx_tokens_line.stdout | int > 0
+    fail_msg: "/etc/nginx/nginx.conf has no server_tokens line: add 'server_tokens off;' to its http block"
+    quiet: true
+
+- name: Switch server_tokens off
+  ansible.builtin.lineinfile:
+    path: /etc/nginx/nginx.conf
+    regexp: '^(\s*)#?\s*server_tokens\s+off;'
+    line: '\1server_tokens off;'
+    backrefs: true
+  notify: Check and reload Nginx
+
+- name: Look at the site link and what it needs
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop: ["{{ nginx_site }}", "{{ nginx_site_target }}", "{{ nginx_cert }}"]
+  register: nginx_site_paths
+
+- name: Refuse a site path that is not our link
+  ansible.builtin.assert:
+    that: >-
+      not nginx_site_paths.results[0].stat.exists or
+      (nginx_site_paths.results[0].stat.islnk and
+       nginx_site_paths.results[0].stat.lnk_target == nginx_site_target)
+    fail_msg: "{{ nginx_site }} exists and is not a link to {{ nginx_site_target }}: left as is"
+    quiet: true
+
+- name: Report what the site link waits for
+  ansible.builtin.debug:
+    msg: >-
+      WARNING {{ nginx_site }} not linked yet:
+      {{ nginx_site_target if not nginx_site_paths.results[1].stat.exists else nginx_cert }}
+      is missing (docs/infrastructure.md, Rebuilding the server from zero)
+  when: not (nginx_site_paths.results[1].stat.exists and nginx_site_paths.results[2].stat.exists)
+
+# Removed again when nginx -t rejects it, so a broken site never waits for a restart.
+- name: Link the site
+  when: nginx_site_paths.results[1].stat.exists and nginx_site_paths.results[2].stat.exists
+  block:
+    - name: Link the site from the deploy clone
+      ansible.builtin.file:
+        src: "{{ nginx_site_target }}"
+        dest: "{{ nginx_site }}"
+        state: link
+      register: nginx_site_link
+
+    - name: Test Nginx's configuration with the site
+      ansible.builtin.command:
+        argv: [nginx, -t, -q]
+      changed_when: false
+      when: nginx_site_link is changed and not ansible_check_mode
+      notify: Check and reload Nginx
+  rescue:
+    - name: Remove the rejected link
+      ansible.builtin.file:
+        path: "{{ nginx_site }}"
+        state: absent
+
+    - name: Stop on the rejected site
+      ansible.builtin.fail:
+        msg: nginx -t rejected the site; link removed

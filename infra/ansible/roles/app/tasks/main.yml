@@ -1,0 +1,70 @@
+---
+- name: Look for the deploy clone
+  ansible.builtin.stat:
+    path: "{{ app_dir }}/.git"
+  register: app_git
+
+- name: Clone docker/ only
+  when: not app_git.stat.exists
+  block:
+    - name: Create the clone's directory
+      ansible.builtin.file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: deploy
+        group: deploy
+        mode: "0755"
+
+    - name: Clone the repository sparse, as deploy
+      ansible.builtin.command:
+        argv: [runuser, -u, deploy, --, git, clone, -q, --sparse, "{{ app_repo_url }}", "{{ app_dir }}"]
+        creates: "{{ app_dir }}/.git"
+
+    - name: Check out docker/ only
+      ansible.builtin.command:
+        argv: [runuser, -u, deploy, --, git, -C, "{{ app_dir }}", sparse-checkout, set, --cone, docker]
+      changed_when: true
+
+# An existing clone is never rewritten, only checked.
+- name: Read the existing clone's sparse checkout
+  ansible.builtin.command:
+    argv: [runuser, -u, deploy, --, git, -C, "{{ app_dir }}", sparse-checkout, list]
+  register: app_sparse
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  when: app_git.stat.exists
+
+- name: Refuse a clone that is not sparse on docker/
+  ansible.builtin.assert:
+    that: app_sparse.stdout == 'docker'
+    fail_msg: >-
+      {{ app_dir }} is a clone but its sparse checkout is
+      '{{ app_sparse.stdout | default('', true) or 'off' }}', not 'docker': left as is
+    quiet: true
+  when: app_git.stat.exists
+
+- name: Look for the .env file
+  ansible.builtin.stat:
+    path: "{{ app_dir }}/.env"
+  register: app_env
+
+- name: Report a missing .env file
+  ansible.builtin.debug:
+    msg: "WARNING {{ app_dir }}/.env missing: create it from .env.example (docs/infrastructure.md)"
+  when: not app_env.stat.exists
+
+# external: true in the prod overlay, so Compose neither creates nor deletes it.
+- name: Look for the database's Docker volume
+  ansible.builtin.command:
+    argv: [docker, volume, inspect, postgres_data]
+  register: app_postgres_volume
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Create the database's Docker volume
+  ansible.builtin.command:
+    argv: [docker, volume, create, postgres_data]
+  when: app_postgres_volume.rc != 0
+  changed_when: true

@@ -1,0 +1,33 @@
+---
+- name: Create the deploy user
+  ansible.builtin.user:
+    name: deploy
+    shell: /bin/bash
+    groups: [docker]
+    append: true
+
+- name: Create deploy's .ssh
+  ansible.builtin.file:
+    path: /home/deploy/.ssh
+    state: directory
+    owner: deploy
+    group: deploy
+    mode: "0700"
+
+- name: Authorise the CI's deploy key
+  ansible.posix.authorized_key:
+    user: deploy
+    key: "{{ deploy_user_pubkey }}"
+    state: present
+    manage_dir: false
+
+# The two commands the deploy runs to apply an Nginx config change, nothing else.
+- name: Let deploy test and reload Nginx
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/deploy-nginx
+    content: |
+      deploy ALL=(root) NOPASSWD: /usr/sbin/nginx -t, /usr/bin/systemctl reload nginx
+    owner: root
+    group: root
+    mode: "0440"
+    validate: /usr/sbin/visudo -cqf %s

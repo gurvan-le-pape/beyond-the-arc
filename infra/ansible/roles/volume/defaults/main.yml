@@ -1,0 +1,4 @@
+---
+# The data volume's device; set per group (inventory/group_vars/compose/main.yml).
+# volume_device:
+volume_mount: /var/lib/docker/volumes

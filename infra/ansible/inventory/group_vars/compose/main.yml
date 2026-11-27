@@ -1,0 +1,7 @@
+---
+# The Hetzner volume holding PostgreSQL's data (Terraform: hcloud_volume.database).
+volume_device: /dev/disk/by-id/scsi-0HC_Volume_105727762
+
+# Public key the CI deploys with (its private half is the Production environment's
+# VPS_SSH_KEY secret).
+deploy_user_pubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINQ7AL7GU0gX+4/ugx6XYlKZ1WDSMLlTqs6gNjPTCTzT github-actions-deploy"

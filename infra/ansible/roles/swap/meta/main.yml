@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  author: beyond-the-arc
+  description: 2 GB swap file and swappiness 10
+  license: MIT
+  min_ansible_version: "2.22"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - noble
+dependencies: []
