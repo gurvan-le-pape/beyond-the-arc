@@ -262,8 +262,12 @@ match due:
 The requests are those figures rounded up; the limits leave room for load, which a later
 stage measures.
 
-Every later stage of the lab is measured against these figures. The
-phase's no-go threshold is an idle working set above 75 % of the 8 GiB, 6 GiB. The figures
+Every later stage of the lab is measured against these figures. The phase's no-go
+threshold is idle anonymous memory above 75 % of the 8 GiB, 6 GiB, on the node's cgroup
+(`anon` in `memory.stat`). Not the working set: with a database larger than the memory,
+the page cache fills it to near the limit at any load, so a working-set threshold would
+fail on the cache, which the kernel gives back, and say nothing about what the platform
+holds. The working set stays in the tables as the figure tools report. The figures
 are k3s inside a Docker container on WSL 2; k3s directly on the CX33 shares neither, so
 they place the platform's cost, not production's to the megabyte.
 
