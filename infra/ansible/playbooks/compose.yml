@@ -1,7 +1,7 @@
 ---
 # The Compose host (CX23). Run with --check --diff unless the maintainer has said
-# otherwise for that run. The roles follow docker/provision/provision.sh section by
-# section, in its order: the volume first, so Docker never starts without it.
+# otherwise for that run. The volume role comes first, so Docker never starts without
+# the volume.
 - name: Configure the Compose host
   hosts: compose
   become: false
