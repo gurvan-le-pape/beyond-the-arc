@@ -23,6 +23,7 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 | `argocd/values.yaml` | the argo-cd chart's values, for the install and for every sync after it |
 | `database/` | the application's PostgreSQL, a CloudNativePG `Cluster` (`base/`), and production's backups to R2 (`production/`) |
 | `restore.sh` | restores the latest production backup into it |
+| `restore-test-cnpg.sh` | restores production's CloudNativePG backups into a temporary Cluster, to a restore point, and compares it with production |
 | `sealed-secrets-key.sh` | backs up the Sealed Secrets controller's keys, encrypted, here and on R2 |
 | `app/` | the application: a Kustomize base and the lab overlay |
 | `issuers/` | the certificate issuers, and per cluster the Cloudflare token they use, sealed |
@@ -215,7 +216,16 @@ the bucket, which restoring and the retention both need, so these backups are en
 rest by R2 only, not by age like the CX23's dumps. The lab has no backups: it is reloaded
 from production's.
 
+`restore-test-cnpg.sh` proves they restore. It marks the live database with a named
+restore point, restores a second Cluster, `restore-test`, from R2 up to that point (the
+latest base backup, and the WAL after it), compares `../ansible/backup-counts.sql` on both,
+and deletes the copy. Run it while the scheduler is idle. First run, 2026-11-28: the 9.2 GB
+base backup and its WAL restored in 216 s and matched production row for row, and the
+copy's timeline history showed recovery stopped at the restore point.
+
 ```bash
+infra/k8s/restore-test-cnpg.sh            # deletes the copy at the end
+infra/k8s/restore-test-cnpg.sh --keep     # leaves it, to look at
 BTA_CLUSTER=production infra/k8s/k.sh kubectl -n bta get backups
 BTA_CLUSTER=production infra/k8s/k.sh kubectl -n bta get cluster database \
   -o jsonpath='{.status.conditions[?(@.type=="ContinuousArchiving")]}'
