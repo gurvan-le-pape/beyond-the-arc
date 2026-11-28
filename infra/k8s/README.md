@@ -21,7 +21,7 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 | `root.yaml` | the root Application, which renders `apps/` |
 | `apps/` | the app of apps: a chart with one Application per component; `values-production.yaml` is what production runs |
 | `argocd/values.yaml` | the argo-cd chart's values, for the install and for every sync after it |
-| `database/` | the application's PostgreSQL, a CloudNativePG `Cluster` |
+| `database/` | the application's PostgreSQL, a CloudNativePG `Cluster` (`base/`), and production's backups to R2 (`production/`) |
 | `restore.sh` | restores the latest production backup into it |
 | `sealed-secrets-key.sh` | backs up the Sealed Secrets controller's keys, encrypted, here and on R2 |
 | `app/` | the application: a Kustomize base and the lab overlay |
@@ -122,7 +122,7 @@ root (root.yaml, applied by bootstrap.sh)
     ├── argocd: the argo-cd chart, with argocd/values.yaml
     ├── cnpg: the CloudNativePG operator chart (namespace cnpg-system)
     ├── barman-cloud: the Barman Cloud Plugin chart, CloudNativePG's backups to an object store (namespace cnpg-system)
-    ├── database: database/, the PostgreSQL Cluster (namespace bta)
+    ├── database: database/<cluster>/, the PostgreSQL Cluster and, on production, its backups (namespace bta)
     ├── app: app/lab/, backend, frontend, scheduler, the migration and the Ingress (namespace bta)
     ├── cert-manager: the cert-manager chart, with its CRDs (namespace cert-manager)
     ├── sealed-secrets: the Sealed Secrets controller chart (namespace kube-system)
@@ -169,7 +169,7 @@ ApplicationSet controller (scaled to zero; its CRD stays, as the chart installs 
 ## Database
 
 PostgreSQL runs under the CloudNativePG operator, which turns the `Cluster` in
-`database/cluster.yaml` into a pod, its volume, its services (`database-rw` for
+`database/base/cluster.yaml` into a pod, its volume, its services (`database-rw` for
 read-write) and its Secrets. It is the release production runs, PostgreSQL 18.7, as one
 instance, like production's single container. CloudNativePG creates the `btadb`
 database, owned by the `bta` role, and writes that role's credentials and connection
@@ -198,6 +198,26 @@ production. It refuses a database that already has tables; to restore again, del
 
 ```bash
 infra/k8s/k.sh kubectl -n bta delete cluster database
+```
+
+### Production's backups
+
+On production the Cluster archives its WAL continuously and takes a base backup every
+night at 03:00 UTC, through the Barman Cloud Plugin, to the `bta-db-backups` bucket under
+`cnpg/production/` (`database/production/`). Any point in the last 14 days can be
+restored; the plugin deletes what is older. The base backups are locked in R2 for 7 days,
+so the cluster cannot delete a recent one; the WAL is not, because the plugin may write a
+WAL key twice and a lock would stall archiving (`../terraform/cloudflare/r2.tf`).
+
+The R2 token is `r2-cnpg`, sealed to production's key (`r2-cnpg.sealed.yaml`). It can read
+the bucket, which restoring and the retention both need, so these backups are encrypted at
+rest by R2 only, not by age like the CX23's dumps. The lab has no backups: it is reloaded
+from production's.
+
+```bash
+BTA_CLUSTER=production infra/k8s/k.sh kubectl -n bta get backups
+BTA_CLUSTER=production infra/k8s/k.sh kubectl -n bta get cluster database \
+  -o jsonpath='{.status.conditions[?(@.type=="ContinuousArchiving")]}'
 ```
 
 ## Application
@@ -398,8 +418,8 @@ declared in `argocd/values.yaml` (public, no credentials).
 
 `validate.sh` checks what reaches the cluster with kubeconform in strict mode: an unknown
 or misspelt field is an error, not a field the API server would silently drop. That is
-the plain manifests (`root.yaml`, `database/`, `arc/`), the `apps/` chart as `helm
-template` renders it for each cluster, `app/`, `observability/` and `issuers/` per cluster as
+the plain manifests (`root.yaml`, `arc/`), the `apps/` chart as `helm
+template` renders it for each cluster, `app/`, `observability/`, `issuers/` and `database/` per cluster as
 `kubectl kustomize` builds them,
 and each upstream chart an Application installs (argo-cd with `argocd/values.yaml`,
 cloudnative-pg, cert-manager, sealed-secrets, kube-prometheus-stack with
@@ -509,7 +529,7 @@ they place the platform's cost, not production's to the megabyte.
 | Helm | 4.3.2 | `Dockerfile` |
 | Argo CD | 3.6.3, chart 10.20.0 | `apps/values.yaml` (chart); `Dockerfile` (CLI, same release) |
 | CloudNativePG | 1.30.2, chart 0.29.2 | `apps/values.yaml` |
-| PostgreSQL | 18.7 (`minimal` image) | `database/cluster.yaml` (by digest) |
+| PostgreSQL | 18.7 (`minimal` image) | `database/base/cluster.yaml` (by digest) |
 | cert-manager | v1.21.3 (chart of the same version) | `apps/values.yaml` |
 | Sealed Secrets | 0.41.2, chart 2.22.0 | `apps/values.yaml` (chart); `Dockerfile` (kubeseal, same release) |
 | Traefik | k3s's bundled chart (41.6.1) | the k3s release |

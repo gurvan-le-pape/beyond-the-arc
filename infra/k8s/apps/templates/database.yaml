@@ -1,4 +1,5 @@
-# The application's PostgreSQL, as a CloudNativePG Cluster (../../database/).
+# The application's PostgreSQL, as a CloudNativePG Cluster: database/<cluster>, the base Cluster
+# and, on production, its backups to R2.
 {{- if .Values.components.database }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -10,7 +11,7 @@ spec:
   source:
     repoURL: {{ .Values.repoURL }}
     targetRevision: {{ .Values.targetRevision }}
-    path: infra/k8s/database
+    path: infra/k8s/database/{{ .Values.cluster }}
   destination:
     server: https://kubernetes.default.svc
     namespace: bta

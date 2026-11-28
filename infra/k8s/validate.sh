@@ -31,6 +31,7 @@ kubectl kustomize app/production > "$rendered/app-production.yaml"
 for cluster in lab production; do
   kubectl kustomize --load-restrictor LoadRestrictionsNone "observability/$cluster" > "$rendered/observability-$cluster.yaml"
   kubectl kustomize "issuers/$cluster" > "$rendered/issuers-$cluster.yaml"
+  kubectl kustomize "database/$cluster" > "$rendered/database-$cluster.yaml"
 done
 
 # An upstream chart, at the version apps/values.yaml pins for its Application, with the
@@ -65,13 +66,17 @@ render arc bta-lab oci://ghcr.io/actions/actions-runner-controller-charts \
 # Plain manifests: every YAML file outside the charts, the values files, the Kustomize
 # tree and k3d's config.
 mapfile -t manifests < <(find . \( -path ./app -o -path ./apps -o -path ./argocd -o -path ./lab \
-  -o -path ./observability -o -path ./issuers \) -prune -o \
+  -o -path ./observability -o -path ./issuers -o -path ./database \) -prune -o \
   -type f \( -name '*.yaml' -o -name '*.yml' \) -print | sort)
 
 # CustomResourceDefinition is skipped: its schema is recursive (a CRD's schema describes
 # schemas), so the schema repository has no standalone file for it. The CRDs here come
 # unchanged from upstream charts; the resources they define are validated.
-kubeconform -strict -summary -kubernetes-version "$version" -skip CustomResourceDefinition \
+# ObjectStore is skipped too: the catalog's schema for it dates from June 2025 (plugin
+# v0.4) and refuses what the installed CRD accepts, zstd compression among it. The API
+# server checks it against the real CRD: kubectl apply --dry-run=server on a cluster
+# running the plugin.
+kubeconform -strict -summary -kubernetes-version "$version" -skip CustomResourceDefinition,ObjectStore \
   -schema-location "$kubernetes/{{.NormalizedKubernetesVersion}}-standalone{{.StrictSuffix}}/{{.ResourceKind}}{{.KindSuffix}}.json" \
   -schema-location "$crds/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json" \
   "${manifests[@]}" "$rendered"/*.yaml

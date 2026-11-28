@@ -1,0 +1,7 @@
+# The PostgreSQL Cluster both clusters run; each overlay (../lab, ../production) adds what
+# is its own.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: bta
+resources:
+  - cluster.yaml

@@ -1,0 +1,43 @@
+# Where production's database is backed up: the bta-db-backups bucket in R2 (EU
+# jurisdiction), under cnpg/production/. The plugin writes base backups under
+# database/base/ and WAL under database/wals/ there, the Cluster's name being its server
+# name. The base backups are locked for 7 days (infra/terraform/cloudflare/r2.tf); the
+# WAL is not, since the plugin may write a WAL key twice.
+#
+# Retention is a 14-day recovery window: any point in the last 14 days can be restored,
+# and the plugin deletes what is older after each base backup. The bucket has no
+# lifecycle rule under cnpg/.
+#
+# The credentials are an R2 token with Object Read & Write on this bucket only
+# (r2-cnpg.sealed.yaml): it must read, to restore and to apply the retention. The backups
+# are encrypted at rest by R2 and not by age as the CX23's dumps are, since Barman cannot.
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: r2
+spec:
+  retentionPolicy: "14d"
+  configuration:
+    destinationPath: s3://bta-db-backups/cnpg/production/
+    endpointURL: https://e093b1328feb8fef8d914c5e5351bc41.eu.r2.cloudflarestorage.com
+    s3Credentials:
+      accessKeyId:
+        name: r2-cnpg
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: r2-cnpg
+        key: ACCESS_SECRET_KEY
+    wal:
+      compression: zstd
+      maxParallel: 2
+    data:
+      compression: zstd
+      jobs: 2
+  # boto3's default integrity checksums are not R2's: the plugin's documented workaround
+  # for S3-compatible stores (web/docs/object_stores.md, plugin v0.16.0).
+  instanceSidecarConfiguration:
+    env:
+      - name: AWS_REQUEST_CHECKSUM_CALCULATION
+        value: when_required
+      - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+        value: when_required

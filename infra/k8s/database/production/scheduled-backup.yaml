@@ -1,0 +1,18 @@
+# A base backup every night at 03:00 UTC (04:00 in Paris in winter, 05:00 in summer: the
+# schedule has no time zone), off peak, as the CX23's dump at 04:00 Paris. Matches are
+# played on weekend afternoons. immediate takes one as soon as this is created, so the
+# first restore point does not wait for the night.
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: nightly
+spec:
+  # Seconds first: six fields.
+  schedule: "0 0 3 * * *"
+  immediate: true
+  backupOwnerReference: self
+  cluster:
+    name: database
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
