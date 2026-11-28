@@ -5,7 +5,8 @@
 # (infra/terraform/cloudflare/r2.tf).
 #
 # Retention is a 14-day recovery window: any point in the last 14 days can be restored,
-# and the plugin deletes what is older after each base backup. The bucket has no
+# and the plugin deletes what is older after each base backup, so about three weekly base
+# backups are kept, 9 GB each uncompressed (scheduled-backup.yaml). The bucket has no
 # lifecycle rule under cnpg/.
 #
 # The credentials are an R2 token with Object Read & Write on this bucket only
@@ -30,8 +31,12 @@ spec:
     wal:
       compression: zstd
       maxParallel: 2
+    # Base backups go uncompressed: R2 requires every part of a multipart upload but the
+    # last to have the same length, and barman-cloud's compressed stream cuts parts of
+    # varying length (InvalidPart, EnterpriseDB/barman#1161, unmerged). Measured on the
+    # lab: 1 GB of poorly compressible data fails with zstd and passes without; a WAL
+    # file is one part, so its compression is unaffected.
     data:
-      compression: zstd
       jobs: 2
   # boto3's default integrity checksums are not R2's: the plugin's documented workaround
   # for S3-compatible stores (web/docs/object_stores.md, plugin v0.16.0).

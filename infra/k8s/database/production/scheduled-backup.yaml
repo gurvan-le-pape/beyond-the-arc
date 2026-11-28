@@ -1,14 +1,15 @@
-# A base backup every night at 03:00 UTC (04:00 in Paris in winter, 05:00 in summer: the
-# schedule has no time zone), off peak, as the CX23's dump at 04:00 Paris. Matches are
-# played on weekend afternoons. immediate takes one as soon as this is created, so the
-# first restore point does not wait for the night.
+# A base backup every Monday at 03:00 UTC (04:00 in Paris in winter, 05:00 in summer: the
+# schedule has no time zone), the first night after the weekend's matches. Weekly, not
+# nightly: base backups are uncompressed (object-store.yaml), 9 GB each, and the WAL in
+# between is small, so a restore replays little of it. Any point in between is restored
+# from the WAL. immediate takes one as soon as this is created.
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: nightly
+  name: weekly
 spec:
-  # Seconds first: six fields.
-  schedule: "0 0 3 * * *"
+  # Seconds first: six fields; the last is the day of the week, 1 for Monday.
+  schedule: "0 0 3 * * 1"
   immediate: true
   backupOwnerReference: self
   cluster:
