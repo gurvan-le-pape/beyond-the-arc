@@ -42,16 +42,8 @@ resource "cloudflare_r2_bucket_lock" "db_backups" {
   account_id   = local.account_id
   bucket_name  = cloudflare_r2_bucket.db_backups.name
   jurisdiction = cloudflare_r2_bucket.db_backups.jurisdiction
+  # Sorted by id, the order the API returns them in, or every plan shows a reordering.
   rules = concat(
-    [for prefix, days in local.db_backup_retention_days : {
-      id      = "lock-${prefix}-${days}d"
-      enabled = true
-      prefix  = "${prefix}/"
-      condition = {
-        type            = "Age"
-        max_age_seconds = days * local.day_seconds
-      }
-    }],
     [{
       id      = "lock-cnpg-production-base-${local.cnpg_base_backup_lock.days}d"
       enabled = true
@@ -59,6 +51,15 @@ resource "cloudflare_r2_bucket_lock" "db_backups" {
       condition = {
         type            = "Age"
         max_age_seconds = local.cnpg_base_backup_lock.days * local.day_seconds
+      }
+    }],
+    [for prefix, days in local.db_backup_retention_days : {
+      id      = "lock-${prefix}-${days}d"
+      enabled = true
+      prefix  = "${prefix}/"
+      condition = {
+        type            = "Age"
+        max_age_seconds = days * local.day_seconds
       }
     }],
   )
