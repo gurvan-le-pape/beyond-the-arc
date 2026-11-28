@@ -1,5 +1,7 @@
 # Database backups, written nightly by infra/ansible/roles/postgres_backup: one object
-# per night under daily/, Monday's also under weekly/. The server's token has Object
+# per night under daily/, Monday's also under weekly/. The k3s cluster's CloudNativePG
+# writes its own under cnpg/<cluster>/ (infra/k8s/database/), base backups and WAL,
+# and deletes them itself after its retention. The server's token has Object
 # Read & Write on this bucket and nothing else, so it cannot change the two rule sets
 # below: a compromised server cannot delete a backup before its lock runs out.
 #
@@ -11,6 +13,15 @@ locals {
   db_backup_retention_days = {
     daily  = 7
     weekly = 28
+  }
+  # CloudNativePG's base backups: a week of them cannot be deleted from the cluster. Its
+  # WAL (wals/) is not locked: the Barman Cloud Plugin checks only its local spool for a
+  # file it already archived, so after an upload whose reply was lost it writes the same
+  # key again, and a lock would refuse that write and stall archiving until the disk
+  # under PostgreSQL fills. Retention is the plugin's (14 days), so no lifecycle rule.
+  cnpg_base_backup_lock = {
+    prefix = "cnpg/production/database/base/"
+    days   = 7
   }
 }
 
@@ -31,15 +42,26 @@ resource "cloudflare_r2_bucket_lock" "db_backups" {
   account_id   = local.account_id
   bucket_name  = cloudflare_r2_bucket.db_backups.name
   jurisdiction = cloudflare_r2_bucket.db_backups.jurisdiction
-  rules = [for prefix, days in local.db_backup_retention_days : {
-    id      = "lock-${prefix}-${days}d"
-    enabled = true
-    prefix  = "${prefix}/"
-    condition = {
-      type            = "Age"
-      max_age_seconds = days * local.day_seconds
-    }
-  }]
+  rules = concat(
+    [for prefix, days in local.db_backup_retention_days : {
+      id      = "lock-${prefix}-${days}d"
+      enabled = true
+      prefix  = "${prefix}/"
+      condition = {
+        type            = "Age"
+        max_age_seconds = days * local.day_seconds
+      }
+    }],
+    [{
+      id      = "lock-cnpg-production-base-${local.cnpg_base_backup_lock.days}d"
+      enabled = true
+      prefix  = local.cnpg_base_backup_lock.prefix
+      condition = {
+        type            = "Age"
+        max_age_seconds = local.cnpg_base_backup_lock.days * local.day_seconds
+      }
+    }],
+  )
 }
 
 # Deleted one day after the lock lets go, so a backup is never kept less than its
