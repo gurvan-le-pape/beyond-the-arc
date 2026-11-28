@@ -10,6 +10,7 @@ resources:
   - r2-cnpg.sealed.yaml
   - object-store.yaml
   - scheduled-backup.yaml
+  - pod-monitor.yaml
 # Turning archiving on restarts the instance once, to add the plugin's sidecar.
 patches:
   - target:

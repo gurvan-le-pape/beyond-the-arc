@@ -105,7 +105,7 @@ So the filter adds one field to the first kind:
 
 The set it marks is deliberately conservative — `TypeError`, `RangeError`, `ReferenceError`, in `PROGRAMMER_ERROR_TYPES`. Application-level error classes are operational and are not in it.
 
-**This is a query-time filter, not an alert.** No alert rule routes on it: all eight rules in `provisioning/alerting/rules.yml` query Prometheus, and none queries Loki. It is also **not a Loki label** — Promtail attaches no pipeline stage, so nothing promotes it. It does not need to be one, and this is the general point made under "Log format" above: `| json` parses the line and filters on any field it finds, label or not. Labels select streams; fields filter within them.
+**This is a query-time filter, not an alert.** No alert rule routes on it: all nine rules in `provisioning/alerting/rules.yml` query Prometheus, and none queries Loki. It is also **not a Loki label** — Promtail attaches no pipeline stage, so nothing promotes it. It does not need to be one, and this is the general point made under "Log format" above: `| json` parses the line and filters on any field it finds, label or not. Labels select streams; fields filter within them.
 
 Verified against a Loki instance rather than assumed. Three lines pushed to one `{service="backend"}` stream — a `TypeError` line carrying the flag, a Prisma-timeout 5xx without it, and a 404 — then queried:
 
@@ -282,7 +282,8 @@ Grafana Alerting fires email notifications via Gmail SMTP when thresholds are cr
 | Disk Full       | root filesystem > 85% used                                                 | 5m   |
 | CPU Saturated   | host CPU busy > 80%, averaged over cores — the Host CPU Usage panel's expression | 30m  |
 | Endpoint Unreachable | `probe_success < 1` — any probed target stops answering               | 2m   |
-| Database Backup Missing | no backup has reached R2 for more than 26 h, or the metric is missing (`bta_db_backup_last_success_timestamp_seconds`, node-exporter textfile collector) | 5m   |
+| Database Backup Missing | a backup is overdue in R2: the CX23's nightly dump after 26 h (`bta_db_backup_last_success_timestamp_seconds`, node-exporter textfile collector), the k3s cluster's weekly CloudNativePG base backup after 170 h (`barman_cloud_cloudnative_pg_io_last_available_backup_timestamp`); or neither metric exists | 5m   |
+| WAL Archiving Failing | PostgreSQL's newest WAL archiving attempt failed (`cnpg_pg_stat_archiver_last_failed_time` newer than `…_last_archived_time`); no series, as on the CX23, is not an alert | 10m  |
 
 **`Backend 5xx Rate` measures an absolute rate, and is now named for it.** `0.01` is 0.01 5xx responses per second — roughly one every 100 seconds, or about three in five minutes — and nothing divides by the total request rate. It was called *High Error Rate* and annotated "exceeded 1%" until 2026-08-16, promising a ratio that no part of the rule computed. The rule was kept and the label fixed, rather than the reverse, because at this deployment's volume a percentage is the wrong instrument rather than the right one worded badly:
 

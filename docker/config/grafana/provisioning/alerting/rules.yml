@@ -441,10 +441,23 @@ groups:
             datasourceUid: PBFA97CFB590B2093
             model:
               editorMode: code
-              # Hours since the last backup reached R2, written by the backup job
-              # (infra/ansible/roles/postgres_backup) through node-exporter's
-              # textfile collector.
-              expr: (time() - max(bta_db_backup_last_success_timestamp_seconds)) / 3600
+              # Hours a backup is overdue, one series per kind of backup this
+              # host makes: below zero is on time.
+              # - nightly dump: the CX23's pg_dump to R2, its timestamp written by
+              #   the backup job (infra/ansible/roles/postgres_backup) through
+              #   node-exporter's textfile collector. Due within 26 hours: one
+              #   nightly run missed, with two hours' slack for a slow one.
+              # - weekly base backup: the k3s cluster's CloudNativePG base backup
+              #   to R2, from the Barman Cloud Plugin's metric on the database pod
+              #   (infra/k8s/database/production/). Due within 170 hours: a week,
+              #   with the same two hours' slack.
+              # label_replace gives each its own label, so that a Prometheus
+              # holding both keeps both: `or` drops a right-hand series whose labels
+              # match a left-hand one.
+              expr: |-
+                label_replace((time() - max(bta_db_backup_last_success_timestamp_seconds)) / 3600 - 26, "backup", "nightly dump", "", "")
+                or
+                label_replace((time() - max(barman_cloud_cloudnative_pg_io_last_available_backup_timestamp)) / 3600 - 170, "backup", "weekly base backup", "", "")
               instant: true
               intervalMs: 1000
               legendFormat: __auto
@@ -458,7 +471,7 @@ groups:
               conditions:
                 - evaluator:
                     params:
-                      - 26
+                      - 0
                     type: gt
                   operator:
                     type: and
@@ -477,14 +490,78 @@ groups:
               maxDataPoints: 43200
               refId: C
               type: threshold
-        # 26 hours: one nightly run missed, with two hours' slack for a slow one.
-        # No series means no backup has ever succeeded on this host, or the
-        # metric is no longer collected: either way there is no proof of a backup.
+        # No series means no backup of either kind has ever succeeded on this
+        # host, or the metric is no longer collected: either way there is no
+        # proof of a backup. The uid keeps the rule's first threshold.
         noDataState: Alerting
         execErrState: Error
         for: 5m
         annotations:
-          summary: No database backup has reached R2 for more than 26 hours
+          summary: "Database backup overdue: the {{ $labels.backup }} has not reached R2 in time"
+        isPaused: false
+        notification_settings:
+          receiver: email-admin
+      - uid: walarchivingfailing
+        title: WAL Archiving Failing
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: PBFA97CFB590B2093
+            model:
+              editorMode: code
+              # Seconds by which PostgreSQL's last failed WAL archiving is newer than
+              # its last successful one, per instance, from CloudNativePG's
+              # pg_stat_archiver metrics. Above zero, the newest attempt failed;
+              # while a file keeps failing, PostgreSQL retries it, the failure
+              # time keeps moving and the success time does not.
+              expr: cnpg_pg_stat_archiver_last_failed_time - cnpg_pg_stat_archiver_last_archived_time
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: C
+            queryType: expression
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        # WAL that cannot be archived stays in pg_wal, on the database's own volume,
+        # until it can: archiving that stays broken ends with a full disk and a
+        # stopped database, and every point in time after the failure is missing
+        # from the backups. Ten minutes rides out one failed upload retried.
+        # No series is a host without WAL archiving (the CX23), so it is not an
+        # alert; a k3s host losing these metrics loses the plugin's too, which
+        # Database Backup Missing catches.
+        noDataState: OK
+        execErrState: Error
+        for: 10m
+        annotations:
+          summary: "PostgreSQL cannot archive its WAL to R2: {{ $labels.pod }}"
         isPaused: false
         notification_settings:
           receiver: email-admin
