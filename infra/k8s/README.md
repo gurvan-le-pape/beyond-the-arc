@@ -333,7 +333,7 @@ Production's monitoring, on Kubernetes:
 
 The files are shared, not copied: `observability/base/kustomization.yaml` builds its
 ConfigMaps from `docker/config/`, so an alert rule or the dashboard changes once for both,
-and the eight rules evaluate here exactly as in production. That needs Kustomize to read
+and the nine rules evaluate here exactly as in production. That needs Kustomize to read
 outside its directory, which Argo CD allows (`argocd/values.yaml`,
 `kustomize.buildOptions`) and `validate.sh` passes. The names production's files use are
 kept: the backend's scrape job is `backend` (a `ServiceMonitor` takes the Service's name),

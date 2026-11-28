@@ -1,0 +1,17 @@
+# Prometheus scrapes the database's metrics: the instance manager's exporter on the
+# metrics port, with CloudNativePG's default queries (pg_stat_archiver among them) and the
+# Barman Cloud Plugin's backup timestamps. The alert rules Database Backup Missing and WAL
+# Archiving Failing read them (docker/config/grafana/provisioning/alerting/rules.yml).
+# Written here, not by the Cluster's monitoring.enablePodMonitor, which CloudNativePG 1.30
+# deprecates. Production only: the lab archives nothing, so its archiver metrics would
+# only say so.
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: database
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: database
+  podMetricsEndpoints:
+    - port: metrics
