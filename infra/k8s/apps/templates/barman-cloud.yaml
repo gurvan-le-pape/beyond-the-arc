@@ -1,0 +1,39 @@
+# The Barman Cloud Plugin, through which CloudNativePG archives WAL and takes base backups
+# to an object store (CloudNativePG's own barmanObjectStore is deprecated and goes in
+# 1.32). It runs beside the operator, in cnpg-system as it requires, with its ObjectStore
+# CRD; the operator finds it by its Service. Its TLS between the two comes from
+# cert-manager: a self-signed Issuer and two Certificates the chart creates.
+{{- if .Values.components.barmanCloud }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: barman-cloud
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://cloudnative-pg.github.io/charts
+    chart: plugin-barman-cloud
+    targetRevision: {{ .Values.barmanCloud.chartVersion | quote }}
+    helm:
+      releaseName: plugin-barman-cloud
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cnpg-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      # On a new cluster this syncs alongside cert-manager, before its CRDs exist; the
+      # retry below waits for them.
+      - SkipDryRunOnMissingResource=true
+    retry:
+      limit: 10
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+{{- end }}

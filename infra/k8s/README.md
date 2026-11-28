@@ -121,6 +121,7 @@ root (root.yaml, applied by bootstrap.sh)
 └── renders apps/, a chart of Applications
     ├── argocd: the argo-cd chart, with argocd/values.yaml
     ├── cnpg: the CloudNativePG operator chart (namespace cnpg-system)
+    ├── barman-cloud: the Barman Cloud Plugin chart, CloudNativePG's backups to an object store (namespace cnpg-system)
     ├── database: database/, the PostgreSQL Cluster (namespace bta)
     ├── app: app/lab/, backend, frontend, scheduler, the migration and the Ingress (namespace bta)
     ├── cert-manager: the cert-manager chart, with its CRDs (namespace cert-manager)

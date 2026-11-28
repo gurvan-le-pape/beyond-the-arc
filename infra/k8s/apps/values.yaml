@@ -10,6 +10,7 @@ components:
   traefik: true
   sealedSecrets: true
   cnpg: true
+  barmanCloud: true
   database: true
   app: true
   certManager: true
@@ -31,6 +32,11 @@ argocd:
 # The CloudNativePG operator chart; its appVersion is the operator release.
 cnpg:
   chartVersion: 0.29.2
+
+# The Barman Cloud Plugin chart; its appVersion is the plugin release, which needs the
+# operator at 1.30 or later.
+barmanCloud:
+  chartVersion: 0.9.0
 
 # cert-manager, which issues the lab's certificates by DNS-01 against Cloudflare.
 certManager:
