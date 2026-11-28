@@ -203,7 +203,8 @@ infra/k8s/k.sh kubectl -n bta delete cluster database
 ### Production's backups
 
 On production the Cluster archives its WAL continuously and takes a base backup every
-night at 03:00 UTC, through the Barman Cloud Plugin, to the `bta-db-backups` bucket under
+Monday at 03:00 UTC, uncompressed since R2 refuses barman-cloud's compressed multipart
+uploads (`database/production/object-store.yaml`), through the Barman Cloud Plugin, to the `bta-db-backups` bucket under
 `cnpg/production/` (`database/production/`). Any point in the last 14 days can be
 restored; the plugin deletes what is older. Unlike the CX23's dumps, nothing under
 `cnpg/` is locked in R2: Barman rewrites `backup.info` during a base backup, and may write a
