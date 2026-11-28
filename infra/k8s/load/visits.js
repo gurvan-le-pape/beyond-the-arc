@@ -9,6 +9,12 @@
 //   RATE, DURATION  requests per second (default 5), how long (default 2m)
 //   RESOLVE    optional host=ip:port, to reach a name with no public record pointing there
 //   INSECURE   1 to accept a certificate no browser trusts (Let's Encrypt staging)
+//   UA         the User-Agent sent, default bta-load: what picks this run's lines out of
+//              the proxy's access log (nginx or Traefik) for the server-side times
+//   SKIP       optional regular expression; the paths it matches are not requested
+//
+// The run aborts once more than 1 % of requests have failed (after 20 s), so a run against
+// production stops itself rather than waiting out DURATION.
 //
 // The ids (a championship, its pool, a club, one of its teams, a player of it, a completed
 // match) are the same in production and in a lab restored from its backup.
@@ -30,6 +36,12 @@ if (__ENV.RESOLVE) {
 
 export const options = {
   hosts,
+  userAgent: __ENV.UA || "bta-load",
+  thresholds: {
+    failed: [
+      { threshold: "rate<0.01", abortOnFail: true, delayAbortEval: "20s" },
+    ],
+  },
   insecureSkipTLSVerify: __ENV.INSECURE === "1",
   discardResponseBodies: true,
   scenarios: {
@@ -58,7 +70,7 @@ const requests = [
   ["page", "/en/players/100897"],
   ["page", "/en/matches/83629"],
   ["api", "/api/matches/83629"],
-];
+].filter(([, path]) => !__ENV.SKIP || !new RegExp(__ENV.SKIP).test(path));
 
 const trends = { page: new Trend("page", true), api: new Trend("api", true) };
 const failed = new Rate("failed");

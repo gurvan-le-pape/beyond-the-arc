@@ -94,7 +94,7 @@ The no-go is a page median or p95 worse on the CX33.
 
 ## Carried into phase 5
 
-- The latency gate above.
+- The latency gate above: passed, see `ASSESSMENT-phase5.md`.
 - Traefik: HTTP to HTTPS redirect and the security headers nginx sets today.
 - A production issuer (Let's Encrypt production) for the real hostnames.
 - CloudNativePG's own backups to R2 with WAL archiving, replacing the systemd timer, and
