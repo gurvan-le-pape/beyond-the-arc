@@ -1,9 +1,18 @@
 # Database backups, written nightly by infra/ansible/roles/postgres_backup: one object
 # per night under daily/, Monday's also under weekly/. The k3s cluster's CloudNativePG
 # writes its own under cnpg/<cluster>/ (infra/k8s/database/), base backups and WAL,
-# and deletes them itself after its retention. The server's token has Object
-# Read & Write on this bucket and nothing else, so it cannot change the two rule sets
-# below: a compromised server cannot delete a backup before its lock runs out.
+# and deletes them itself after its retention.
+#
+# cnpg/ has no lock, because Barman rewrites keys it has written: backup.info at the
+# start of a base backup and again at its end (barman-cloud 3.19), and a WAL file after
+# an upload whose reply was lost, since the plugin looks only in its local spool for
+# what it already archived. A lock refuses the second write: the base backup fails, or
+# archiving stalls on that WAL until the disk under PostgreSQL fills. Nor a lifecycle
+# rule: the plugin's retention (14 days) deletes.
+#
+# The CX23's token has Object Read & Write on this bucket and nothing else, so it cannot
+# change the two rule sets below: a compromised server cannot delete a dump before its
+# lock runs out.
 #
 # Lock and lifecycle have no import: Terraform creates them, and each replaces the
 # bucket's whole rule set of its kind.
@@ -13,15 +22,6 @@ locals {
   db_backup_retention_days = {
     daily  = 7
     weekly = 28
-  }
-  # CloudNativePG's base backups: a week of them cannot be deleted from the cluster. Its
-  # WAL (wals/) is not locked: the Barman Cloud Plugin checks only its local spool for a
-  # file it already archived, so after an upload whose reply was lost it writes the same
-  # key again, and a lock would refuse that write and stall archiving until the disk
-  # under PostgreSQL fills. Retention is the plugin's (14 days), so no lifecycle rule.
-  cnpg_base_backup_lock = {
-    prefix = "cnpg/production/database/base/"
-    days   = 7
   }
 }
 
@@ -43,26 +43,15 @@ resource "cloudflare_r2_bucket_lock" "db_backups" {
   bucket_name  = cloudflare_r2_bucket.db_backups.name
   jurisdiction = cloudflare_r2_bucket.db_backups.jurisdiction
   # Sorted by id, the order the API returns them in, or every plan shows a reordering.
-  rules = concat(
-    [{
-      id      = "lock-cnpg-production-base-${local.cnpg_base_backup_lock.days}d"
-      enabled = true
-      prefix  = local.cnpg_base_backup_lock.prefix
-      condition = {
-        type            = "Age"
-        max_age_seconds = local.cnpg_base_backup_lock.days * local.day_seconds
-      }
-    }],
-    [for prefix, days in local.db_backup_retention_days : {
-      id      = "lock-${prefix}-${days}d"
-      enabled = true
-      prefix  = "${prefix}/"
-      condition = {
-        type            = "Age"
-        max_age_seconds = days * local.day_seconds
-      }
-    }],
-  )
+  rules = [for prefix, days in local.db_backup_retention_days : {
+    id      = "lock-${prefix}-${days}d"
+    enabled = true
+    prefix  = "${prefix}/"
+    condition = {
+      type            = "Age"
+      max_age_seconds = days * local.day_seconds
+    }
+  }]
 }
 
 # Deleted one day after the lock lets go, so a backup is never kept less than its
