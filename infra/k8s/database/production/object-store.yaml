@@ -1,8 +1,8 @@
 # Where production's database is backed up: the bta-db-backups bucket in R2 (EU
 # jurisdiction), under cnpg/production/. The plugin writes base backups under
 # database/base/ and WAL under database/wals/ there, the Cluster's name being its server
-# name. The base backups are locked for 7 days (infra/terraform/cloudflare/r2.tf); the
-# WAL is not, since the plugin may write a WAL key twice.
+# name. Nothing under cnpg/ is locked, since Barman rewrites keys it has written
+# (infra/terraform/cloudflare/r2.tf).
 #
 # Retention is a 14-day recovery window: any point in the last 14 days can be restored,
 # and the plugin deletes what is older after each base backup. The bucket has no

@@ -205,9 +205,9 @@ infra/k8s/k.sh kubectl -n bta delete cluster database
 On production the Cluster archives its WAL continuously and takes a base backup every
 night at 03:00 UTC, through the Barman Cloud Plugin, to the `bta-db-backups` bucket under
 `cnpg/production/` (`database/production/`). Any point in the last 14 days can be
-restored; the plugin deletes what is older. The base backups are locked in R2 for 7 days,
-so the cluster cannot delete a recent one; the WAL is not, because the plugin may write a
-WAL key twice and a lock would stall archiving (`../terraform/cloudflare/r2.tf`).
+restored; the plugin deletes what is older. Unlike the CX23's dumps, nothing under
+`cnpg/` is locked in R2: Barman rewrites `backup.info` during a base backup, and may write a
+WAL key twice, and a lock refuses both (`../terraform/cloudflare/r2.tf`).
 
 The R2 token is `r2-cnpg`, sealed to production's key (`r2-cnpg.sealed.yaml`). It can read
 the bucket, which restoring and the retention both need, so these backups are encrypted at

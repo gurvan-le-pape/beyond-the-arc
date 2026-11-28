@@ -1,6 +1,6 @@
 # Production's database (bta-prod-k3s, the CX33): the base Cluster, with its WAL archived
 # and a base backup taken nightly to R2 by the Barman Cloud Plugin (../../apps/templates/
-# barman-cloud.yaml). The bucket, its lock and the reasons for them are in
+# barman-cloud.yaml). The bucket, and why cnpg/ has no lock, are in
 # infra/terraform/cloudflare/r2.tf.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
