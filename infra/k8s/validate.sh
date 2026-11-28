@@ -49,6 +49,7 @@ render() {
 }
 render argocd argocd https://argoproj.github.io/argo-helm argo-cd argocd -f argocd/values.yaml
 render cnpg cnpg https://cloudnative-pg.github.io/charts cloudnative-pg cnpg-system
+render barmanCloud plugin-barman-cloud https://cloudnative-pg.github.io/charts plugin-barman-cloud cnpg-system
 # The values of apps/templates/cert-manager.yaml and sealed-secrets.yaml.
 render certManager cert-manager https://charts.jetstack.io cert-manager cert-manager \
   --set crds.enabled=true --set startupapicheck.enabled=false
