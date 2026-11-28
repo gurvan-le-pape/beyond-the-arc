@@ -1,0 +1,23 @@
+# The R2 token production's database is backed up with (object-store.yaml): bta-k3s-cnpg,
+# an Account API token with Object Read & Write on the bta-db-backups bucket only, no
+# expiry. Sealed to this cluster's Sealed Secrets key, so only the controller in
+# bta-prod-k3s can decrypt it, and only as the r2-cnpg Secret in bta (strict scope).
+# Sealed again from the file the token's two values were written to, never on screen:
+#   BTA_CLUSTER=production ./k.sh sh -c 'kubectl create secret generic r2-cnpg
+#     --namespace bta --from-env-file=/dev/stdin --dry-run=client -o json |
+#     kubeseal --format yaml' < ~/.config/bta-k8s/r2-cnpg-production.env
+# where that file holds ACCESS_KEY_ID= and ACCESS_SECRET_KEY= lines.
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: r2-cnpg
+  namespace: bta
+spec:
+  encryptedData:
+    ACCESS_KEY_ID: AgAprNEpf8ye5nX1TvTpjwIne1u7hNnjnLHwNCrTQ75mWCby+ZWD1+6I3GA6706AKWBqiZ8dUTJLaEwnWk5n/495TTDcFNO9DCvnc/AA88wqDhbmbzOFYAGDBmPxfd1J2s1Eq2vWaueUkKcIX5b1DsFoXF0okjjv01vKOGCYW+xiorv1UF7JI3RbZv/ga5K3TvCIXaGGDML3MFULSEvjiLV5+GtKxwJdaexGvnvoFudvzd/X+icIPYrIrD0f0B09j7JoeFsZCAckYMR3FaOcIhHTtt5uXatnfEkpiRqVcMoYA8BudBNhmBV7TlXrZhiXTPNyTEwDL+RipxsFW/oJuYd6u+qW7/Ou27qMyemKTZnZ6KICQEWWnJTkqlDBQm99E8rRxjEv719DKw6OaFBDw80mqUNP8jDZAWAX1cAO8XSVkmtACrlY6kGmg1Pua109lGdojyFv9IcGx6ZuGT9Oln6MGxCrnRZifovBg40kGmKNYkLsqVDNSLvJIacJhZKc5hIbxzKKGo+schwQrUaIbg3sG/e+as1+gKbbQofLkPIsOBA1T5SHaPWfUwDt2VDiIXjnmfcVufxgO41eNi8lvFsDi7dNk7BpSMqnk6RHbcs+El0h2E5cjATQ7RmHWEvuzzDUciIpTS8ec96dYPd+BsbxQ0B9N4pPH2Jy2FfnQfiY5G3NbHqJwkeuaS8qj/uUC4P3gMZsbw7D7CoecWb/IQAf+45Jl3nmKED5vgMoB2lkGQ==
+    ACCESS_SECRET_KEY: AgCRWhVYjkVPkw1S5Ka7pO2TX/arfY82qjMlbsMNKqz2QUsmEjI4amGurCISKWNUB2yqeDBoik9SB9kDX4sj8BPUVACTDk8ZV9ffp+DNzxltR2OMyOLaq66sPIke+I0grcStxOdtZ6t4P+FidvnBiX3p8c3t/Nbh7BbbrEDv46/hDFBVdsZEvkE/z3USXJC2x9g49DfRCrCdbD8yvVGojHb9GM77nKLojwlcB8fIXIJ/PG52mAtgzif/Bzcja+ghO9bkC2nZOUDXH1mEm944QBITYxmrJ2lOXhThz9KDtuyRRoLL5gCNa7RHwK3YMu6GKfZrQg6e2XOT1z3dpviwDapYXcxi3SpZahIKzPkeG49Nsu0E4r+C4fzVEWbb00RKkhcbIkwM1a+9G2q2lyTCV1OxLhUIgxQO041fBnO5x0Gs1hC7nst/CEr8buMCMvwjJQPXn1B2EdZe8WAAGaoCvcNDREMZNQLZJgeng5qIjSfyHVSQMtr1PmodAYG3Ihrm4e2oxoOJrYv7HZGzPeCyGF5CpUrkEeU0Yy0ybwIBYgALGYcpl5dYw8yPqcpBJmk2hn/Iu9SQZchfy6wvRu2NKgBtLEZVZpB4bHFJuaqn6QU9dglW2DTR54bwvRJf6MhjczPkga9ou2AJeIIETutfAxRNn7Wcznra0kX140rhmSjEcYV5TShOPpy3QpWwq0vnNK65cWFC2AuuRNkzt0gQCuk5VnZiDflovEtRlH1SrZPptrIuCdQzCndvu9kMiLPX8kl2nY3OrOK9fJpCwxkWY1YL
+  template:
+    metadata:
+      name: r2-cnpg
+      namespace: bta

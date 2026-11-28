@@ -1,0 +1,6 @@
+# The lab's database: the base Cluster, with no backups. The lab is reloaded from
+# production's (../../restore.sh), so nothing in it needs keeping.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../base
