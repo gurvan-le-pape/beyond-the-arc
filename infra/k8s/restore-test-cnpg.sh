@@ -14,8 +14,9 @@
 # With --keep, the copy's timeline history says where recovery stopped
 # (pg_wal/00000002.history):
 #   1  3/E60000C8  at restore point "restore-test-20261128T122234Z"
-# The figures match only if nothing wrote between the count and the mark: run it when the scheduler is
-# idle (matches are played on weekend afternoons, Paris time), and a mismatch says so.
+# The figures match only if nothing wrote between the count and the mark: run it when the
+# scheduler is idle (matches are played on weekend afternoons, Paris time), and a mismatch
+# says so.
 #
 # The copy is a second PostgreSQL on the same node: it needs the database's size in disk
 # space (about 9 GB uncompressed, 2026-11-28) for a few minutes. It does not archive: a
